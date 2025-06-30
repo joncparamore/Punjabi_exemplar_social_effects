@@ -98,6 +98,19 @@ def setup_next_word():
     instructions.hide()
     timer.stop()
     point_popup.move(window.width()//2 + current_word.width()//2+50, 202)
+
+import random
+
+#set probability ex: 20%
+probability = 0.20
+
+# float between 0.0 and 1.0
+if random.random() < probability:
+    print("Speak clearer")
+    points -= 20
+else:
+    pass
+   
     if elapsed_deciseconds<12 and actually_timed is True:
             points += 50
             point_popup.setText("+50")
