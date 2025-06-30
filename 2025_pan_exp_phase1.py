@@ -98,20 +98,27 @@ def setup_next_word():
     instructions.hide()
     timer.stop()
     point_popup.move(window.width()//2 + current_word.width()//2+50, 202)
+'''
+   import random
 
-import random
+   #set probability ex: 20%
+   probability = 0.20
 
-#set probability ex: 20%
-probability = 0.20
-
-# float between 0.0 and 1.0
-if random.random() < probability:
+   #float between 0.0 and 1.0
+   if random.random() < probability:
     print("Speak clearer")
     points -= 20
-else:
-    pass
-   
-    if elapsed_deciseconds<12 and actually_timed is True:
+   else:
+       pass
+   '''
+ #May give random message
+    random_msg_num = random.randint(1,10)
+    if word_num=3 or word_num=4 or word_num = 9 or word_num=22 and actually_timed is True:
+        points +=0
+        point_popup.setText("+0   Please Speak Clearly")
+        point_popup.setStyleSheet("color: FireBrick")
+        QTimer.singleShot(1000, display_next_word) 
+    elif elapsed_deciseconds<12 and actually_timed is True:
             points += 50
             point_popup.setText("+50")
             point_popup.setStyleSheet("color:green")
