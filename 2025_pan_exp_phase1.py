@@ -8,6 +8,12 @@ Created on Thu Jun 26 11:31:18 2025
 
 @author: joncparamore
 """
+import sys
+from PyQt5.QtWidgets import (
+ QApplication, QWidget, QLabel, QPushButton
+)
+from PyQt5.QtGui import QFont
+from PyQt5.QtCore import QTimer, Qt
 
 import pandas as pd
 pan_stimuli = pd.read_csv("pan_stimuli.csv".iloc[: ,0].tolist())
