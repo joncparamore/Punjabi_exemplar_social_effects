@@ -9,25 +9,21 @@ Created on Thu Jun 26 11:31:18 2025
 @author: joncparamore
 """
 
-
-#Imports
-import sys
-from PyQt5.QtWidgets import (
-  QApplication, QWidget, QLabel, QPushButton
-)
-from PyQt5.QtGui import QFont
-from PyQt5.QtCore import QTimer, Qt
-
-
+import pandas as pd
+pan_stimuli = pd.read_csv("pan_stimuli.csv".iloc[: ,0].tolist())
 
 
 app = QApplication([])
 
 
+
+
 #Wordlist Variables
 word_num = 0
-word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
+word_list = pan_stimuli
+#word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
 word_points_left = 50
+
 
 
 #Create Window
@@ -213,7 +209,3 @@ next_button.clicked.connect(setup_next_word)
 
 window.show()
 app.exec_()
-
-
-
-
