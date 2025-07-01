@@ -130,8 +130,8 @@ def setup_next_word():
     timer.stop()            #When Next button is pressed, stop the timer so we know how long it took
              
     if word_num in (3, 7, 11,18,28,54) and actually_timed is True:          #May give random message
-       points +=0
-       point_popup.setText("+0   Alert: Please Speak Clearly")
+       points -=10
+       point_popup.setText("-10   Alert: Please Speak Clearly")
        point_popup.setWordWrap(True)
        point_popup.setStyleSheet("color: FireBrick")
        point_popup.setFont(QFont("Verdana", 20))
