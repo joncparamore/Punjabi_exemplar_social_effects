@@ -16,7 +16,9 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QTimer, Qt
 
 import pandas as pd
-pan_stimuli = pd.read_csv("pan_stimuli.csv".iloc[: ,0].tolist())
+pan_stimuli_df = pd.read_csv("pan_stimuli.csv")  # Read the CSV into a DataFrame
+pan_stimuli = pan_stimuli_df.iloc[:, 0].tolist()
+
 
 
 app = QApplication([])
