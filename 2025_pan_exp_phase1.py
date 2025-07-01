@@ -49,7 +49,7 @@ current_word.move((window.width()-current_word.width())//2, 100)
 #Create Instructions for the first screen only
 
 
-instructions = QLabel("This phase will test your language speaking abilities. You will see a series of words on the screen. Read each word aloud as fastly and clearly as possible.", window)
+instructions = QLabel("This phase will test your language speaking abilities. You will see a series of words on the screen. Read each word aloud as quickly and clearly as possible.", window)
 instructions.setFont(QFont("Verdana", 15))
 instructions.setWordWrap(True)
 instructions.setFixedWidth(400)
