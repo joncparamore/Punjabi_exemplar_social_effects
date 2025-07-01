@@ -8,14 +8,18 @@ Created on Thu Jun 26 11:31:18 2025
 
 @author: joncparamore
 """
+
+#####################ImportPackages##################################
 import sys
 from PyQt5.QtWidgets import (
  QApplication, QWidget, QLabel, QPushButton
 )
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QTimer, Qt
-
 import pandas as pd
+
+
+#####################Import Punjabi Stimuli##################################
 pan_stimuli_df = pd.read_csv("pan_stimuli.csv")  # Read the CSV into a DataFrame
 pan_stimuli = pan_stimuli_df.iloc[:, 0].tolist()
 
@@ -36,7 +40,7 @@ word_points_left = 50
 
 #Create Window
 window = QWidget()
-window.setWindowTitle("Phase 1: Baseline Window")
+window.setWindowTitle("Phase 1: Baseline Window Hi")
 window.setGeometry(100,100,800,500)
 
 
@@ -116,9 +120,6 @@ def update_time():
    word_points_left = 50 - elapsed_deciseconds
    point_countdown.setText(f"{word_points_left:01}" + "   pts")
    clock.setText(f"{seconds:01}" + "   sec")
-
-
-
 
 timer.timeout.connect(update_time) #After every decisecond passes, the update_time function is called
 actually_timed = False      #Used for the sole purpose of making sure the first word doesn't display feedback yet

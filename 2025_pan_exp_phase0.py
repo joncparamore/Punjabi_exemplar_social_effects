@@ -9,106 +9,82 @@ Created on Tue Jul  1 11:06:37 2025
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
-from PyQt5.QtWidgets import (
- QApplication, QWidget, QLabel, QPushButton
-)
+#---------------Import Packages---------------#
+from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy)
 from PyQt5.QtGui import QFont
-
+from PyQt5.QtCore import Qt
 import pandas as pd
-pan_stimuli_df = pd.read_csv("pan_stimuli.csv")  # Read the CSV into a DataFrame
+import random
+#---------------------------------------------#
+
+#---------------Import Stimuli and Shuffle Order---------------#
+pan_stimuli_df = pd.read_csv("pan_stimuli.csv")
 pan_stimuli = pan_stimuli_df.iloc[:, 0].tolist()
-
-
-
-app = QApplication([])
-
-
-
-
+random.shuffle(pan_stimuli)
 #Wordlist Variables
 word_num = 0
 word_list = pan_stimuli
-#word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
+#---------------------------------------------#
 
-
-
-#Create Window
+#---------------initialize app and window---------------#
+app = QApplication([])
 window = QWidget()
-window.setWindowTitle("Phase 0 Window")
-window.setGeometry(100,100,800,500)
+window.setWindowTitle("Warmup")
+window.showFullScreen()
+#---------------------------------------------#
 
 
-#Create Main Text Label
+#---------------Define Window Layout---------------#
+layout = QVBoxLayout() #automatically stacks and centers items in the center of the space
+layout.setAlignment(Qt.AlignCenter)
 
-
-current_word = QLabel("Phase 0: Reading", window)
-current_word.setFont(QFont("Verdana", 34))
-current_word.adjustSize()
-current_word.move((window.width()-current_word.width())//2, 100)
-
-
-
-#Create Instructions for the first screen only
-
-
-instructions = QLabel("In this phase, you will see a series of words on the screen. Please silently read each word.", window)
-instructions.setFont(QFont("Verdana", 15))
+#item 1: instructions
+instructions = QLabel("In this phase, you will see a series of words on the screen. Please silently read each word.")
+instructions.setFont(QFont("Verdana", 20))
 instructions.setWordWrap(True)
-instructions.setFixedWidth(400)
-instructions.adjustSize()
-instructions.move(window.width()//2-instructions.width()//2, 200)
+instructions.setAlignment(Qt.AlignCenter)
+instructions.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+layout.addWidget(instructions, alignment=Qt.AlignCenter)
+
+#item 2: current_word
+current_word = QLabel("")
+current_word.setFont(QFont("Noto Nastaliq Urdu", 75))
+current_word.setAlignment(Qt.AlignCenter)
+current_word.setContentsMargins(40, 0, 40, 0)  # 40px side padding
+layout.addWidget(current_word)
+
+#item 3: spacing between current_word and next button
+layout.addSpacerItem(QSpacerItem(0, 100, QSizePolicy.Minimum, QSizePolicy.Preferred))
+
+#item 4: Next button
+next_button = QPushButton("Next")
+next_button.setFixedSize(120, 50)
+next_button.setStyleSheet("background-color: lightblue; font-size: 18px; font-weight: bold;")
+layout.addWidget(next_button, alignment=Qt.AlignCenter)
+#---------------------------------------------#
 
 
-
-
-#Create Next Button
-next_button = QPushButton("Next", window)
-next_button.adjustSize()
-next_button.move(window.width()//2-next_button.width()//2, 300)
-next_button.setStyleSheet("background-color: lightblue")
-
-
-
-
-#Function that works the program, triggered whenever the Next button is clicked. Adjusts timer and points. Rationale is that once the Next button is clicked points must first be awarded before moving to next word
-
-def setup_next_word():
-    global current_word, word_num
-    instructions.hide()
-    display_next_word()
-   
-   
+#---------------Define Functions for iterating through words---------------#
 #Function that causes each new word to be displayed
-
-
 def display_next_word():
-   global current_word, word_num
-  
-  
+   global word_num
+
    if word_num < len(word_list):
        current_word.setText(word_list[word_num])
-       current_word.setFont(QFont("Verdana", 44))
-       current_word.adjustSize()
-       current_word.move((window.width()-current_word.width())//2, 200)
        word_num+=1
-
-
-
    else:
        next_button.hide()
        current_word.setText("All finished!")
-       current_word.adjustSize()
-       current_word.move((window.width()-current_word.width())//2, 200)
-  
 
+#Function that works the program, triggered whenever the Next button is clicked. Adjusts timer and points. Rationale is that once the Next button is clicked points must first be awarded before moving to next word
+def setup_next_word():
+    instructions.hide()
+    display_next_word()
+#---------------------------------------------#
 
-#Next button triggers the functions, causes the program to run
-
-
+#---------------Execute Script---------------#
 next_button.clicked.connect(setup_next_word)
-
-
-
+window.setLayout(layout)
 window.show()
 app.exec_()
+#---------------------------------------------#
