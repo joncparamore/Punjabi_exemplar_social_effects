@@ -44,6 +44,7 @@ window = QWidget()
 main_layout = QVBoxLayout(window)
 window.setWindowTitle("Phase 1: Baseline Window")
 
+
 screen_geometry = app.primaryScreen().geometry()
 screen_width = screen_geometry.width()
 screen_height = screen_geometry.height()
@@ -201,7 +202,7 @@ def show_feedback():
        point_popup.move(window.width()//2 + current_word.width()//2+120, 350)       
        total_points.setText("Total Points: " + str(points))         #Update the Total Points in the top right corner
        total_points.adjustSize()
-       QTimer.singleShot(1000, next_button.show)            #Briefly pause after the points have been displayed to allow for processing, then show Next Button to move on
+       QTimer.singleShot(2000, next_button.show)            #Briefly pause after the points have been displayed to allow for processing, then show Next Button to move on
    elif word_num in (3, 7, 12,18,28,37,54):          #May give random message
        points -=30
        point_countdown.setText("-30  pts")
@@ -213,7 +214,7 @@ def show_feedback():
        point_popup.adjustSize()
        total_points.setText("Total Points: " + str(points))
        total_points.adjustSize()
-       QTimer.singleShot(1000, next_button.show)
+       QTimer.singleShot(2000, next_button.show)
    else:
         points += word_points_left
         point_popup.setFont(QFont("Verdana", 40))
@@ -230,7 +231,7 @@ def show_feedback():
            point_popup.setStyleSheet("color:#CC6600")
         total_points.setText("Total Points: " + str(points))
         total_points.adjustSize()
-        QTimer.singleShot(500, next_button.show)
+        QTimer.singleShot(1000, next_button.show)
 
  
  
