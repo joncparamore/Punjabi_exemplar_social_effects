@@ -38,6 +38,7 @@ word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse
 
 
 
+
 #Create Window
 window = QWidget()
 main_layout = QVBoxLayout(window)
@@ -191,9 +192,9 @@ def show_feedback():
    done_button.setStyleSheet("background-color: lightgrey; padding: 20px; border: 2 px; border-radius: 5px")        #Fade out the Done button
    timer.stop()            #When Done button is pressed, stop the timer so we know how long it took
    if deciseconds_left <= 0:
-       points -=10
-       point_countdown.setText("-10  pts")
-       point_popup.setText("-10  Out of Time")
+       points -=30
+       point_countdown.setText("-30  pts")
+       point_popup.setText("-30  Out of Time")
        point_popup.setStyleSheet("color: FireBrick")
        point_popup.setFont(QFont("Verdana", 30))
        point_popup.adjustSize()
