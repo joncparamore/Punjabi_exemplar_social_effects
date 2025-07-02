@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Jul  1 11:06:37 2025
-
 @author: gina
 """
 
 #---------------Import Packages---------------#
-from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy)
+from PyQt5.QtWidgets import (
+    QApplication, QWidget, QLabel, QPushButton,
+    QVBoxLayout, QSpacerItem, QSizePolicy, QHBoxLayout
+)
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 import pandas as pd
@@ -18,24 +20,24 @@ import random
 pan_stimuli_df = pd.read_csv("pan_stimuli.csv")
 pan_stimuli = pan_stimuli_df.iloc[:, 0].tolist()
 random.shuffle(pan_stimuli)
-#Wordlist Variables
+
+# Wordlist Variables
 word_num = 0
 word_list = pan_stimuli
 #---------------------------------------------#
 
-#---------------initialize app and window---------------#
+#---------------Initialize app and window---------------#
 app = QApplication([])
 window = QWidget()
 window.setWindowTitle("Warmup")
 window.showFullScreen()
 #---------------------------------------------#
 
-
 #---------------Define Window Layout---------------#
-layout = QVBoxLayout() #automatically stacks and centers items in the center of the space
+layout = QVBoxLayout()
 layout.setAlignment(Qt.AlignCenter)
 
-#item 1: instructions
+# Instructions label
 instructions = QLabel("In this phase, you will see a series of words on the screen. Please silently read each word.")
 instructions.setFont(QFont("Verdana", 20))
 instructions.setWordWrap(True)
@@ -43,44 +45,92 @@ instructions.setAlignment(Qt.AlignCenter)
 instructions.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 layout.addWidget(instructions, alignment=Qt.AlignCenter)
 
-#item 2: current_word
+# Word display label
 current_word = QLabel("")
 current_word.setFont(QFont("Noto Nastaliq Urdu", 75))
 current_word.setAlignment(Qt.AlignCenter)
-current_word.setContentsMargins(40, 0, 40, 0)  # 40px side padding
+current_word.setContentsMargins(40, 0, 40, 0)
+current_word.hide()  # hide on start
 layout.addWidget(current_word)
 
-#item 3: spacing between current_word and next button
+# Spacer
 layout.addSpacerItem(QSpacerItem(0, 100, QSizePolicy.Minimum, QSizePolicy.Preferred))
 
-#item 4: Next button
+# Start button
+start_button = QPushButton("Start")
+start_button.setFixedSize(140, 60)
+start_button.setStyleSheet("background-color: lightgreen; font-size: 20px; font-weight: bold;")
+layout.addWidget(start_button, alignment=Qt.AlignCenter)
+
+# Space out back and next buttons
+button_layout = QHBoxLayout()
+button_layout.setSpacing(60)  # Set the gap between the buttons
+button_layout.setAlignment(Qt.AlignCenter)  # Center the whole group
+
+# Back button
+back_button = QPushButton("Back")
+back_button.setFixedSize(120, 50)
+back_button.setStyleSheet("background-color: lightgray; font-size: 18px; font-weight: bold;")
+back_button.hide()
+button_layout.addWidget(back_button)
+
+# Next button
 next_button = QPushButton("Next")
 next_button.setFixedSize(120, 50)
 next_button.setStyleSheet("background-color: lightblue; font-size: 18px; font-weight: bold;")
-layout.addWidget(next_button, alignment=Qt.AlignCenter)
+next_button.hide()
+button_layout.addWidget(next_button)
+
+layout.addLayout(button_layout)
 #---------------------------------------------#
 
-
-#---------------Define Functions for iterating through words---------------#
-#Function that causes each new word to be displayed
+#---------------Functions to Show Words---------------#
 def display_next_word():
-   global word_num
+    global word_num
+    total_words = len(word_list)
 
-   if word_num < len(word_list):
-       current_word.setText(word_list[word_num])
-       word_num+=1
-   else:
-       next_button.hide()
-       current_word.setText("All finished!")
+    if word_num < total_words:
+        current_word.setText(word_list[word_num])
+        word_num += 1
 
-#Function that works the program, triggered whenever the Next button is clicked. Adjusts timer and points. Rationale is that once the Next button is clicked points must first be awarded before moving to next word
-def setup_next_word():
+        back_button.show()
+        next_button.show()
+
+        if word_num == total_words:
+            next_button.setText("Finish")
+            next_button.setStyleSheet("background-color: lightgreen; font-size: 18px; font-weight: bold;")
+        else:
+            next_button.setText("Next")
+            next_button.setStyleSheet("background-color: lightblue; font-size: 18px; font-weight: bold;")
+    else:
+        current_word.setText("All done!")
+        back_button.hide()
+        next_button.hide()
+
+def start_experiment():
     instructions.hide()
+    start_button.hide()
+    current_word.show()
+    display_next_word()
+
+def setup_next_word():
+    display_next_word()
+
+def setup_previous_word():
+    global word_num
+    if word_num > 1:
+        word_num -= 2
+    elif word_num == 1:
+        word_num -= 1
     display_next_word()
 #---------------------------------------------#
 
-#---------------Execute Script---------------#
+#---------------Connect Buttons---------------#
+start_button.clicked.connect(start_experiment)
 next_button.clicked.connect(setup_next_word)
+back_button.clicked.connect(setup_previous_word)
+
+#---------------Run Application---------------#
 window.setLayout(layout)
 window.show()
 app.exec_()
