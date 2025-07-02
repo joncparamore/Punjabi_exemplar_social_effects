@@ -14,6 +14,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 import pandas as pd
 import random
+import csv
 #---------------------------------------------#
 
 #---------------Import Stimuli and Shuffle Order---------------#
@@ -23,7 +24,10 @@ random.shuffle(pan_stimuli)
 
 # Wordlist Variables
 word_num = 0
-word_list = pan_stimuli
+#word_list = pan_stimuli
+word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
+random.shuffle(word_list)
+
 #---------------------------------------------#
 
 #---------------Initialize app and window---------------#
@@ -36,6 +40,10 @@ window.showFullScreen()
 #---------------Define Window Layout---------------#
 layout = QVBoxLayout()
 layout.setAlignment(Qt.AlignCenter)
+
+#Used to export and keep track of word order
+phase0_word_order_list = []
+
 
 # Instructions label
 instructions = QLabel("In this phase, you will see a series of words on the screen. Please silently read each word.")
@@ -91,8 +99,10 @@ def display_next_word():
 
     if word_num < total_words:
         current_word.setText(word_list[word_num])
+        phase0_word_order_list.append(word_list[word_num])     #output word order into csv for later analysis
+   
         word_num += 1
-
+        
         back_button.show()
         next_button.show()
 
@@ -106,6 +116,12 @@ def display_next_word():
         current_word.setText("All done!")
         back_button.hide()
         next_button.hide()
+
+
+        with open('phase0_warmup_word_order.csv', 'w', newline='') as file:      #Download the .csv of all of the words once you have reached the end of the list
+            writer = csv.writer(file)
+            for word in phase0_word_order_list:
+                writer.writerow([word])
 
 def start_experiment():
     instructions.hide()
