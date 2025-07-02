@@ -22,6 +22,8 @@ import pandas as pd
 #####################Import Punjabi Stimuli##################################
 pan_stimuli_df = pd.read_csv("pan_stimuli.csv")  # Read the CSV into a DataFrame
 pan_stimuli = pan_stimuli_df.iloc[:, 0].tolist()
+eng_stimuli_df = pd.read_csv("eng_test_words.csv")  # Read the CSV into a DataFrame
+eng_stimuli = eng_stimuli_df.iloc[:, 0].tolist()
 
 
 
@@ -32,8 +34,7 @@ app = QApplication([])
 
 #Wordlist Variables
 word_num = 0
-word_list = pan_stimuli
-#word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
+word_list = eng_stimuli
 word_points_left = 50
 
 
