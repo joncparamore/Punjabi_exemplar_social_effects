@@ -51,7 +51,7 @@ feedback_shown = False
 
 
 #Used to export and keep track of word order
-phase1_word_order_output = []
+phase1_word_order_list = []
 
 
 #---------------Create Window---------------#
@@ -376,9 +376,9 @@ def display_next_word():
 
 
 
-      with open('phase1_word_order.csv', 'w', newline='') as file:      #Download the .csv of all of the words once you have reached the end of the list
+      with open('phase1_baseline_word_order.csv', 'w', newline='') as file:      #Download the .csv of all of the words once you have reached the end of the list
          writer = csv.writer(file)
-         for word in phase1_word_order_output:
+         for word in phase1_word_order_list:
             writer.writerow([word])
 
 
