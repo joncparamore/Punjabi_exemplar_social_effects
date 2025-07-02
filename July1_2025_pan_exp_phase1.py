@@ -32,10 +32,9 @@ app = QApplication([])
 
 #Wordlist Variables
 word_num = 0
-word_list = pan_stimuli
+#word_list = pan_stimuli
 word_points_left = 60
-#word_list = ["ant", "bear", "cat", "dog", "eye", "goat"]
-
+word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
 
 
 
