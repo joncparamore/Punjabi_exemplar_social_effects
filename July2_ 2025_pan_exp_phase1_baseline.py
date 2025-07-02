@@ -29,7 +29,7 @@ import random
 
 pan_stimuli_df = pd.read_csv("pan_stimuli.csv")  # Read the CSV into a DataFrame
 pan_stimuli = pan_stimuli_df.iloc[:, 0].tolist()
-random.shuffle(pan_stimuli)
+
 eng_stimuli_df = pd.read_csv("eng_test_words.csv")  # Read the CSV into a DataFrame
 eng_stimuli = eng_stimuli_df.iloc[:, 0].tolist()
 
@@ -43,8 +43,10 @@ app = QApplication([])
 word_num = 0
 
 #word_list = pan_stimuli
-word_list = eng_stimuli
-#word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
+#word_list = eng_stimuli
+word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
+random.shuffle(word_list)
+
 
 word_points_left = 60
 feedback_shown = False
@@ -271,7 +273,7 @@ def start_program():
 def show_feedback():
    global current_word, points, word_num, point_popup, word_points_left, deciseconds_left, feedback_shown
    
-   phase1_word_order_output.append(word_list[word_num])     #output word order into csv for later analysis
+   phase1_word_order_list.append(word_list[word_num])     #output word order into csv for later analysis
    
    done_button.setEnabled(False)
    if feedback_shown is True:
