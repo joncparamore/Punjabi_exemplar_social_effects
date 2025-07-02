@@ -6,9 +6,6 @@ Created on Tue Jul  1 11:06:37 2025
 @author: gina
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 #---------------Import Packages---------------#
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy)
 from PyQt5.QtGui import QFont

@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jul  1 13:21:49 2025
+
+@author: gina
+"""
+
 import sys
 import random
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
