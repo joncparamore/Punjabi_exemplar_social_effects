@@ -43,8 +43,8 @@ app = QApplication([])
 word_num = 0
 
 #word_list = pan_stimuli
-#word_list = eng_stimuli
-word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
+word_list = eng_stimuli
+#word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
 random.shuffle(word_list)
 
 
@@ -152,7 +152,7 @@ clock_point_layout.addWidget(clock)        # Add to the layout
 clock_point_layout.addWidget(point_countdown)
 clock_point_layout.addStretch()
 
-layout.addSpacerItem(QSpacerItem(0, 70, QSizePolicy.Fixed, QSizePolicy.Fixed))      #Space from top of screen to Clock/Point Countdown
+layout.addSpacerItem(QSpacerItem(0, 100, QSizePolicy.Minimum, QSizePolicy.Preferred))      #Space from top of screen to Clock/Point Countdown
 layout.addWidget(clock_point_container, alignment=Qt.AlignCenter)                   #Causes the container of buttons to be centrally aligned
 
 
@@ -164,7 +164,7 @@ point_popup = QLabel("", window)    #Point popup text that appears after clickin
 point_popup.setFixedSize(600, 80)
 point_popup.setAlignment(Qt.AlignCenter)
 
-layout.addSpacerItem(QSpacerItem(0, 40, QSizePolicy.Fixed, QSizePolicy.Fixed))   #Space from Clock/Point countdown to the point_popup
+layout.addSpacerItem(QSpacerItem(0, 60, QSizePolicy.Minimum, QSizePolicy.Preferred))   #Space from Clock/Point countdown to the point_popup
 layout.addWidget(point_popup, alignment=Qt.AlignCenter)
 
 
@@ -190,7 +190,7 @@ instructions = QLabel("This phase will test your language speaking abilities. Yo
 instructions.setFont(QFont("Verdana", 20))
 instructions.setStyleSheet("line-height: 150%") 
 instructions.setWordWrap(True)
-instructions.setFixedWidth(600)
+instructions.setFixedSize(800,300)
 instructions.setAlignment(Qt.AlignCenter)
 instructions.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 layout.addSpacerItem(QSpacerItem(0, 100, QSizePolicy.Minimum, QSizePolicy.Preferred))
@@ -243,10 +243,10 @@ button_layout.addWidget(done_button)        # Add buttons to the layout
 button_layout.addWidget(next_button)
 button_layout.addStretch()
 
-layout.addSpacerItem(QSpacerItem(0, 60, QSizePolicy.Fixed, QSizePolicy.Fixed)) #Adds vertical space between teh Current Word and the done and next buttons
+layout.addSpacerItem(QSpacerItem(0, 60, QSizePolicy.Minimum, QSizePolicy.Preferred)) #Adds vertical space between teh Current Word and the done and next buttons
 layout.addWidget(button_container, alignment=Qt.AlignCenter)                   #Causes the container of buttons to be centrally aligned
 
-layout.addSpacerItem(QSpacerItem(0, 140, QSizePolicy.Fixed, QSizePolicy.Fixed))     #Adds space at bottom of screen underneath the Done and Next Buttons
+layout.addSpacerItem(QSpacerItem(0, 250, QSizePolicy.Minimum, QSizePolicy.Preferred))     #Adds space at bottom of screen underneath the Done and Next Buttons
 
 
 
@@ -374,7 +374,7 @@ def display_next_word():
       total_points.setStyleSheet("background-color: lightgreen; border: 2 px; padding: 10px; border-radius: 5px")
       total_points.adjustSize()
       layout.addWidget(total_points, alignment=Qt.AlignCenter)  
-      layout.addSpacerItem(QSpacerItem(0, 340, QSizePolicy.Fixed, QSizePolicy.Fixed)) 
+      layout.addSpacerItem(QSpacerItem(0, 540, QSizePolicy.Minimum, QSizePolicy.Preferred)) 
 
 
 
