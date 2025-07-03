@@ -329,13 +329,13 @@ class TileGame(QWidget):
             self.total_points_label.setText(f"Total Points: {self.points}")
             self.char_points_label.setText(f"{self.scenarios[self.current_speaker]['name']} Points: {self.character_points[self.current_speaker]}")
 
-            # Step 1: After short pause, highlight correct tile
+            #highlight correct tile
             def highlight_correct_tile():
                 for btn in self.tile_buttons:
                     if btn.text() == self.target_word:
                         btn.setStyleSheet("background-color: green; color: white; font-size: 16px; border-radius: 12px;")
                         break
-                # Step 2: After second pause, move to next block
+                #move to next block
                 QTimer.singleShot(1000, self.show_block_instruction)
 
             QTimer.singleShot(1000, highlight_correct_tile)
