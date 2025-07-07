@@ -1,4 +1,5 @@
 import sys
+import csv
 import random
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 from PyQt5.QtCore import QTimer, Qt
@@ -158,9 +159,9 @@ class TileGame(QWidget):
           self.char_points_label.hide()
           self.total_points_label.hide()
 
-          # Make icon bigger for instructions screen (Scholar larger)
+          # Make icon bigger for instructions screen 
           if self.current_speaker == "B":
-              scholar_size = self.scale_w(0.28)  # bigger scholar icon
+              scholar_size = self.scale_w(0.28) 
               self.char_icon.resize(scholar_size, scholar_size)
           else:
               normal_size = self.scale_w(0.225)
@@ -199,9 +200,8 @@ class TileGame(QWidget):
         self.clock.show()
         self.point_countdown.show()
 
-        # Resize icon differently based on speaker (Scholar larger)
         if self.current_speaker == "B":
-            small_size = self.scale_w(0.18)  # larger scholar icon in gameplay
+            small_size = self.scale_w(0.18)
             self.char_icon.resize(small_size, small_size)
             self.char_icon.move(self.scale_w(0.02), self.scale_h(0.08))
         else:
@@ -335,7 +335,6 @@ class TileGame(QWidget):
                     if btn.text() == self.target_word:
                         btn.setStyleSheet("background-color: green; color: white; font-size: 16px; border-radius: 12px;")
                         break
-                #move to next block
                 QTimer.singleShot(1000, self.show_block_instruction)
 
             QTimer.singleShot(1000, highlight_correct_tile)
