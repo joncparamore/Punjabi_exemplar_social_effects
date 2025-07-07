@@ -24,8 +24,8 @@ random.shuffle(pan_stimuli)
 
 # Wordlist Variables
 word_num = 0
-#word_list = pan_stimuli
-word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
+word_list = pan_stimuli
+#word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
 random.shuffle(word_list)
 
 #---------------------------------------------#
@@ -46,7 +46,7 @@ phase0_word_order_list = []
 
 
 # Instructions label
-instructions = QLabel("In this phase, you will see a series of words on the screen. Please silently read each word.")
+instructions = QLabel("In this phase, you will see a series of Punjabi words on the screen. Please silently read each word to ensure you are familiar with each one.")
 instructions.setFont(QFont("Verdana", 20))
 instructions.setWordWrap(True)
 instructions.setAlignment(Qt.AlignCenter)
