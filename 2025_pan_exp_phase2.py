@@ -3,7 +3,7 @@ import csv
 import random
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtGui import QFont, QPixmap, QColor
+from PyQt5.QtGui import QFont, QPixmap
 import pandas as pd
 
 pan_stimuli_df = pd.read_csv("pan_stimuli.csv")
@@ -13,7 +13,6 @@ def build_trial_blocks(word_list, block_size=5):
     trials = []
     total_words = len(word_list)
     num_blocks = (total_words + block_size - 1) // block_size
-
     for block_index in range(num_blocks):
         start = block_index * block_size
         end = min(start + block_size, total_words)
@@ -26,7 +25,6 @@ def build_trial_blocks(word_list, block_size=5):
 class TileGame(QWidget):
     def __init__(self):
         super().__init__()
-
         screen = QApplication.primaryScreen()
         size = screen.size()
         self.screen_width = size.width()
@@ -63,6 +61,9 @@ class TileGame(QWidget):
         self.max_points_per_trial = 50
         self.tile_buttons = []
 
+        # List to track correct answer order
+        self.correct_answer_order = []
+
         self.setup_ui()
 
     def scale_w(self, x_ratio):
@@ -75,23 +76,20 @@ class TileGame(QWidget):
         self.phase2_title = QLabel("Phase 2: Listening", self)
         self.phase2_title.setFont(QFont("Verdana", self.scale_w(0.05)))
         self.phase2_title.adjustSize()
-        self.phase2_title.move((self.screen_width - self.phase2_title.width()) // 2,
-                               self.scale_h(0.4))
+        self.phase2_title.move((self.screen_width - self.phase2_title.width()) // 2, self.scale_h(0.4))
 
         self.instructions = QLabel("", self)
         self.instructions.setFont(QFont("Verdana", self.scale_w(0.016)))
         self.instructions.setWordWrap(True)
         self.instructions.setFixedWidth(self.scale_w(0.5))
-        self.instructions.move((self.screen_width - self.instructions.width()) // 2,
-                               self.scale_h(0.55))
+        self.instructions.move((self.screen_width - self.instructions.width()) // 2, self.scale_h(0.55))
         self.instructions.hide()
 
         self.next_button = QPushButton("Start", self)
         self.next_button.setFont(QFont("Verdana", self.scale_w(0.018)))
         self.next_button.resize(self.scale_w(0.15), self.scale_h(0.07))
-        self.next_button.move((self.screen_width - self.next_button.width()) // 2,
-                              self.scale_h(0.70))
-        self.next_button.setStyleSheet("background-color: lightgray; border-radius: 10px;")  # Gray button
+        self.next_button.move((self.screen_width - self.next_button.width()) // 2, self.scale_h(0.70))
+        self.next_button.setStyleSheet("background-color: lightgray; border-radius: 10px;")
         self.next_button.clicked.connect(self.start_first_instruction)
 
         self.char_points_label = QLabel(self)
@@ -140,56 +138,44 @@ class TileGame(QWidget):
         self.show_block_instruction()
 
     def show_block_instruction(self):
-       block_size = 5
-       if self.trial_counter % block_size == 0 and self.trial_counter < self.total_trials:
-          self.clear_existing_tiles()
-          self.timer.stop()
-          self.points_label.clear()
+        block_size = 5
+        if self.trial_counter % block_size == 0 and self.trial_counter < self.total_trials:
+            self.clear_existing_tiles()
+            self.timer.stop()
+            self.points_label.clear()
+            self.current_speaker, _ = self.trials[self.trial_counter]
+            text = ("You will hear a series of spoken words. After each word, click the matching word tile "
+                    f"to help {self.scenarios[self.current_speaker]['name']} complete their goal.")
+            self.instructions.setText(text)
+            self.instructions.adjustSize()
+            self.instructions.show()
 
-          self.current_speaker, _ = self.trials[self.trial_counter]
-          text = ("You will hear a series of spoken words. After each word, click the matching word tile "
-              f"to help {self.scenarios[self.current_speaker]['name']} complete their goal.")
+            self.clock.hide()
+            self.point_countdown.hide()
+            self.char_points_label.hide()
+            self.total_points_label.hide()
 
-          self.instructions.setText(text)
-          self.instructions.adjustSize()
-          self.instructions.show()
+            # Icon placement
+            if self.current_speaker == "B":
+                scholar_size = self.scale_w(0.28)
+                self.char_icon.resize(scholar_size, scholar_size)
+                self.char_icon.move(self.scale_w(0.365), self.scale_h(0.15))
+            else:
+                normal_size = self.scale_w(0.225)
+                self.char_icon.resize(normal_size, normal_size)
+                self.char_icon.move(self.scale_w(0.3875), self.scale_h(0.15))
 
-          self.clock.hide()
-          self.point_countdown.hide()
-          self.char_points_label.hide()
-          self.total_points_label.hide()
+            pixmap = QPixmap("laborer.jpg") if self.current_speaker == "A" else QPixmap("scholar.jpg")
+            pixmap = pixmap.scaled(self.char_icon.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.char_icon.setPixmap(pixmap)
+            self.char_icon.show()
 
-          # Make icon bigger for instructions screen 
-          if self.current_speaker == "B":
-              scholar_size = self.scale_w(0.28) 
-              self.char_icon.resize(scholar_size, scholar_size)
-          else:
-              normal_size = self.scale_w(0.225)
-              self.char_icon.resize(normal_size, normal_size)
-
-          # Load image based on current speaker
-          if self.current_speaker == "A":
-              pixmap = QPixmap("laborer.jpg")
-          else:
-              pixmap = QPixmap("scholar.jpg")
-
-          pixmap = pixmap.scaled(self.char_icon.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-          self.char_icon.setPixmap(pixmap)
-          
-          if self.current_speaker == "A":
-              self.char_icon.move(self.scale_w(0.3875), self.scale_h(0.15))  
-          else:
-              self.char_icon.move(self.scale_w(0.365), self.scale_h(0.15))
-
-          self.char_icon.show()
-
-          self.next_button.setText("Next")
-          self.next_button.show()
-          self.next_button.clicked.disconnect()
-          self.next_button.clicked.connect(self.start_block)
-
-       else:
-          self.start_block()
+            self.next_button.setText("Next")
+            self.next_button.show()
+            self.next_button.clicked.disconnect()
+            self.next_button.clicked.connect(self.start_block)
+        else:
+            self.start_block()
 
     def start_block(self):
         self.instructions.hide()
@@ -208,21 +194,16 @@ class TileGame(QWidget):
             small_size = self.scale_w(0.14)
             self.char_icon.resize(small_size, small_size)
             self.char_icon.move(self.scale_w(0.02), self.scale_h(0.12))
-        
 
-        if self.current_speaker == "A":
-            pixmap = QPixmap("laborer.jpg")
-        else:
-            pixmap = QPixmap("scholar.jpg")
-
+        pixmap = QPixmap("laborer.jpg") if self.current_speaker == "A" else QPixmap("scholar.jpg")
         pixmap = pixmap.scaled(self.char_icon.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.char_icon.setPixmap(pixmap)
         self.char_icon.show()
-
         self.next_trial()
 
     def next_trial(self):
         if self.trial_counter >= self.total_trials:
+            self.save_csv_output()  
             self.points_label.setText("")
             self.clear_existing_tiles()
             self.timer.stop()
@@ -254,10 +235,10 @@ class TileGame(QWidget):
             return
 
         self.current_speaker, self.target_word = self.trials[self.trial_counter]
+        self.correct_answer_order.append(self.target_word)  # Track target word
         scenario = self.scenarios[self.current_speaker]
         self.char_points_label.setText(f"{scenario['name']} Points: {self.character_points[self.current_speaker]}")
         self.total_points_label.setText(f"Total Points: {self.points}")
-
         self.trial_counter += 1
         self.points_label.setText("")
         self.elapsed_deciseconds = 0
@@ -268,6 +249,11 @@ class TileGame(QWidget):
         self.point_countdown.show()
         self.timer.start()
 
+    def save_csv_output(self):
+        with open("phase2_correct_order.csv", "w", newline='') as file:
+            writer = csv.writer(file)
+            for word in self.correct_answer_order:
+                writer.writerow([word])
 
     def create_tiles(self):
         self.clear_existing_tiles()
@@ -325,11 +311,9 @@ class TileGame(QWidget):
             tile_button.setStyleSheet("background-color: red; color: white; font-size: 16px; border-radius: 12px;")
             msg = self.scenarios[self.current_speaker]["wrong_msg"]
             self.points_label.setText(f"❌ {msg} (-50 pts)")
-
             self.total_points_label.setText(f"Total Points: {self.points}")
             self.char_points_label.setText(f"{self.scenarios[self.current_speaker]['name']} Points: {self.character_points[self.current_speaker]}")
 
-            #highlight correct tile
             def highlight_correct_tile():
                 for btn in self.tile_buttons:
                     if btn.text() == self.target_word:
