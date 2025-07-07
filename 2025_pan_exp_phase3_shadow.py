@@ -90,15 +90,17 @@ valid_words = [word for word in map_sh_to_audio if
 
 random.shuffle(valid_words)
 
+#Basically take the words and split each list in half so that there are 4 sections that alternate between speakers
+
 half = len(valid_words) // 2
 first_half = valid_words[:half]
 second_half = valid_words[half:]
 
 #split into ATO/AK1 versions
-block1 = [(word, next(v for v in map_sh_to_audio[word] if v[1] == "ATO")) for word in first_half]
-block2 = [(word, next(v for v in map_sh_to_audio[word] if v[1] == "AK1")) for word in first_half]
-block3 = [(word, next(v for v in map_sh_to_audio[word] if v[1] == "ATO")) for word in second_half]
-block4 = [(word, next(v for v in map_sh_to_audio[word] if v[1] == "AK1")) for word in second_half]
+block1 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "ATO")) for word in first_half]
+block2 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "AK1")) for word in first_half]
+block3 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "ATO")) for word in second_half]
+block4 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "AK1")) for word in second_half]
 
 # Final full list of words to present
 
@@ -548,10 +550,6 @@ def next_word():
         
         sound.playingChanged.connect(on_audio_finished)
         word_num += 1
-
-
-                        
-
 
 
 
