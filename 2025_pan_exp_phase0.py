@@ -198,7 +198,7 @@ def show_demographic_form_page2():
                 return
         
         #add demographic to csv
-        with open("demographics.csv", "a", newline='') as f:
+        with open("demographics.csv", "a", newline='', encoding='utf-8-sig') as f:
             writer = csv.writer(f)
             if f.tell() == 0:
                 writer.writerow(list(demographic_data.keys()))
