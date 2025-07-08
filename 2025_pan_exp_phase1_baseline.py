@@ -437,7 +437,7 @@ def display_next_word():
       layout.addSpacerItem(QSpacerItem(0, 540, QSizePolicy.Minimum, QSizePolicy.Preferred)) 
 
       filename = f"{user_id}_phase1_baseline_word_order.csv"   #Download the .csv of all of the words once you have reached the end of the list
-      with open(filename, 'w', newline='') as file:
+      with open(filename, 'w', newline='', encoding='utf-8-sig') as file:
             writer = csv.writer(file)
             for word in phase1_word_order_list:
                 writer.writerow([word])
