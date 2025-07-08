@@ -13,7 +13,7 @@ Created on Fri Jul 04 11:31:18 2025
 
 
 import sys, csv, os
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit
 from PyQt5.QtMultimedia import QSoundEffect
 from PyQt5.QtCore import QUrl, QTimer, Qt 
 from PyQt5.QtGui import QFont, QPixmap, QColor
@@ -107,8 +107,26 @@ block4 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "A
 audio_word_list = []
 audio_word_list += [("Section 1", None)] + block1
 audio_word_list += [("Section 2", None)] + block2
-audio_word_list += [("Section 3 3", None)] + block3
+audio_word_list += [("Section 3", None)] + block3
 audio_word_list += [("Section 4", None)] + block4
+
+
+audio_word_list += [("Section 5", None)] + block1
+audio_word_list += [("Section 6", None)] + block2
+audio_word_list += [("Section 7", None)] + block3
+audio_word_list += [("Section 8", None)] + block4
+
+
+audio_word_list += [("Section 9", None)] + block1
+audio_word_list += [("Section 10", None)] + block2
+audio_word_list += [("Section 11", None)] + block3
+audio_word_list += [("Section 12", None)] + block4
+
+
+audio_word_list += [("Section 13", None)] + block1
+audio_word_list += [("Section 14", None)] + block2
+audio_word_list += [("Section 15", None)] + block3
+audio_word_list += [("Section 16", None)] + block4
 
 
 sound = QSoundEffect()
@@ -152,6 +170,66 @@ window.setLayout(layout)
 window.showFullScreen()
 
 
+
+
+#----------------Get User ID on first screen-------------#
+
+
+user_id = "participant"     #variable to store it
+
+id_label = QLabel("Please enter your Name or ID to begin:", window)
+id_label.setFont(QFont("Verdana", 24))
+id_label.setAlignment(Qt.AlignCenter)
+
+id_input = QLineEdit(window)
+id_input.setFont(QFont("Verdana", 20))
+id_input.setFixedWidth(400)
+id_input.setPlaceholderText("e.g., jsmith123")
+id_input.setAlignment(Qt.AlignCenter)
+
+continue_button = QPushButton("Continue", window)
+continue_button.setFont(QFont("Verdana", 22))
+continue_button.setFixedSize(180, 50)
+continue_button.setStyleSheet("background-color: lightgreen; font-size: 18px;")
+
+
+# Container widget and layout for centering
+id_container = QWidget(window)
+id_layout = QVBoxLayout(id_container)
+id_layout.setAlignment(Qt.AlignCenter)
+
+
+id_layout.addSpacing(200)
+id_layout.addWidget(id_label, alignment=Qt.AlignCenter)
+id_layout.addSpacing(60)
+id_layout.addWidget(id_input, alignment=Qt.AlignCenter)
+id_layout.addSpacing(60)
+id_layout.addWidget(continue_button,alignment=Qt.AlignCenter)
+
+
+
+layout.addWidget(id_container, alignment=Qt.AlignCenter)
+
+
+
+def proceed_to_main_window():
+    global user_id
+    entered_id = id_input.text().strip()
+    if entered_id:
+        user_id = entered_id
+        layout.removeWidget(id_container)
+        id_container.deleteLater()  
+        instructions.show()
+        current_word.show()
+        start_button.show()   
+    else:     
+        return
+
+continue_button.clicked.connect(proceed_to_main_window)
+
+
+
+
 #---------------Create Points---------------#
 
 
@@ -162,7 +240,7 @@ total_points = QLabel("Total Points: " + str(points),window)
 total_points.setFont(QFont("Verdana", 22))
 total_points.setStyleSheet("color:DarkSlateGray")
 total_points.adjustSize()
-
+total_points.hide()
 total_points_top_bar = QHBoxLayout()
 total_points_top_bar.setContentsMargins(0, 30, 30, 0)  # top, right padding
 layout.addLayout(total_points_top_bar)
@@ -296,7 +374,7 @@ current_word.setFont(QFont("Verdana", 50))
 current_word.adjustSize()
 current_word.setAlignment(Qt.AlignCenter)
 current_word.setContentsMargins(40, 0, 40, 0)  # 40px side padding
-
+current_word.hide()
 
 layout.addSpacerItem(QSpacerItem(0, 100, QSizePolicy.Minimum, QSizePolicy.Preferred)) #spacing between point popup and curent word 
 layout.addWidget(current_word)
@@ -315,7 +393,7 @@ instructions.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 layout.addSpacerItem(QSpacerItem(0, 100, QSizePolicy.Minimum, QSizePolicy.Preferred))
 layout.addWidget(instructions, alignment=Qt.AlignCenter)
 
-
+instructions.hide()
 
 
 
@@ -329,7 +407,7 @@ start_button.setFixedSize(120, 50)
 start_button.setStyleSheet("background-color: lightblue; font-size: 18px; ")
 layout.addSpacerItem(QSpacerItem(0, 100, QSizePolicy.Minimum, QSizePolicy.Preferred))
 layout.addWidget(start_button, alignment=Qt.AlignCenter)
-
+start_button.hide()
 
 #---------------Create Done Button---------------#
 done_button = QPushButton("Done", window)
@@ -380,6 +458,7 @@ def start_program():
    point_countdown.show()
    clock.show()
    done_button.show()
+   total_points.show()
    next_word()      #Automatically triggers the first word to appear
 
 
@@ -489,7 +568,9 @@ def next_word():
         layout.addSpacerItem(QSpacerItem(0, 540, QSizePolicy.Minimum, QSizePolicy.Preferred)) 
 
 
-        with open('phase3_shadow_word_order.csv', 'w', newline='') as file:      #Download the .csv of all of the words once you have reached the end of the list
+        
+        filename = f"{user_id}_phase3_shadow_word_order.csv"   #Download the .csv of all of the words once you have reached the end of the list
+        with open(filename, 'w', newline='') as file:
             writer = csv.writer(file)
             for word in phase3_word_order_list:
                 writer.writerow([word])
@@ -503,7 +584,7 @@ def next_word():
         done_button.hide()
         start_button.show()
         current_word.setFont(QFont("Verdana", 30))
-        if "1" in audio_word_list[word_num][0] or "3" in audio_word_list[word_num][0]:
+        if any(digit in audio_word_list[word_num][0] for digit in ("1", "3", "5", "7","9","11", "13", "15")):
             laborer_image.show()
             scholar_image.hide()
             current_word.setText(audio_word_list[word_num][0] + " of helping the laborer is about to begin") 
