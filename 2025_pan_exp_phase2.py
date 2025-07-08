@@ -6,6 +6,8 @@ from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QFont, QPixmap
 import pandas as pd
 
+
+#word list
 pan_stimuli_df = pd.read_csv("pan_stimuli.csv")
 pan_stimuli = pan_stimuli_df.iloc[:, 0].tolist()
 
@@ -30,9 +32,11 @@ class TileGame(QWidget):
         self.screen_width = size.width()
         self.screen_height = size.height()
 
+        #Window settings
         self.setWindowTitle("Phase 2: Listening Task")
         self.setGeometry(0, 0, self.screen_width, self.screen_height)
 
+        #Scenario Information
         self.scenarios = {
             "A": {
                 "name": "Laborer",
@@ -48,6 +52,7 @@ class TileGame(QWidget):
             }
         }
 
+        #trial setup
         self.word_list = pan_stimuli.copy()
         random.shuffle(self.word_list)
         self.trials = build_trial_blocks(self.word_list)
@@ -66,6 +71,7 @@ class TileGame(QWidget):
 
         self.setup_ui()
 
+    #scaling
     def scale_w(self, x_ratio):
         return int(self.screen_width * x_ratio)
 
@@ -73,11 +79,13 @@ class TileGame(QWidget):
         return int(self.screen_height * y_ratio)
 
     def setup_ui(self):
+        #title screen
         self.phase2_title = QLabel("Phase 2: Listening", self)
         self.phase2_title.setFont(QFont("Verdana", self.scale_w(0.05)))
         self.phase2_title.adjustSize()
         self.phase2_title.move((self.screen_width - self.phase2_title.width()) // 2, self.scale_h(0.4))
 
+        #instructions text
         self.instructions = QLabel("", self)
         self.instructions.setFont(QFont("Verdana", self.scale_w(0.016)))
         self.instructions.setWordWrap(True)
@@ -85,6 +93,7 @@ class TileGame(QWidget):
         self.instructions.move((self.screen_width - self.instructions.width()) // 2, self.scale_h(0.55))
         self.instructions.hide()
 
+        #start/next button
         self.next_button = QPushButton("Start", self)
         self.next_button.setFont(QFont("Verdana", self.scale_w(0.018)))
         self.next_button.resize(self.scale_w(0.15), self.scale_h(0.07))
@@ -92,23 +101,27 @@ class TileGame(QWidget):
         self.next_button.setStyleSheet("background-color: lightgray; border-radius: 10px;")
         self.next_button.clicked.connect(self.start_first_instruction)
 
+        #character points 
         self.char_points_label = QLabel(self)
         self.char_points_label.setFont(QFont("Verdana", self.scale_w(0.014)))
         self.char_points_label.move(self.scale_w(0.02), self.scale_h(0.06))
         self.char_points_label.resize(self.scale_w(0.2), 30)
         self.char_points_label.hide()
 
+        #character icon
         icon_size = self.scale_w(0.125)
         self.char_icon = QLabel(self)
         self.char_icon.resize(icon_size, icon_size)
         self.char_icon.hide()
 
+        #total points
         self.total_points_label = QLabel(f"Total Points: {self.points}", self)
         self.total_points_label.setFont(QFont("Verdana", self.scale_w(0.016)))
         self.total_points_label.move(self.screen_width - self.scale_w(0.22), self.scale_h(0.06))
         self.total_points_label.resize(self.scale_w(0.2), 30)
         self.total_points_label.hide()
 
+        #countdown timer
         self.clock = QLabel("", self)
         self.clock.setFont(QFont("Verdana", self.scale_w(0.014)))
         self.clock.setStyleSheet("background-color: lightgrey; border: 2px solid gray; padding: 8px; border-radius: 5px;")
@@ -123,11 +136,13 @@ class TileGame(QWidget):
         self.point_countdown.move(self.screen_width - self.scale_w(0.22), self.scale_h(0.20))
         self.point_countdown.hide()
 
+        #feedback
         self.points_label = QLabel("", self)
         self.points_label.setFont(QFont("Verdana", self.scale_w(0.012)))
         self.points_label.resize(700, 40)
         self.points_label.move((self.screen_width - 500) // 2, self.scale_h(0.18))
 
+        #timer setup
         self.timer = QTimer()
         self.timer.setInterval(100)
         self.timer.timeout.connect(self.update_timer)
@@ -150,6 +165,7 @@ class TileGame(QWidget):
             self.instructions.adjustSize()
             self.instructions.show()
 
+            #hide ui
             self.clock.hide()
             self.point_countdown.hide()
             self.char_points_label.hide()
@@ -186,6 +202,7 @@ class TileGame(QWidget):
         self.clock.show()
         self.point_countdown.show()
 
+        #smaller icon during tiles
         if self.current_speaker == "B":
             small_size = self.scale_w(0.18)
             self.char_icon.resize(small_size, small_size)
