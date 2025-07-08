@@ -278,7 +278,7 @@ def display_next_word():
         next_button.hide()
 
         filename = f"{user_id}_phase0_warmup_word_order.csv"
-        with open(filename, 'w', newline='') as file:
+        with open(filename, 'w', newline='', encoding='utf-8-sig') as file:
             writer = csv.writer(file)
             for word in phase0_word_order_list:
                 writer.writerow([word])
