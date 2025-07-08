@@ -8,7 +8,7 @@ Created on Tue Jul  1 11:06:37 2025
 #---------------Import Packages---------------#
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QPushButton,
-    QVBoxLayout, QSpacerItem, QSizePolicy, QHBoxLayout
+    QVBoxLayout, QSpacerItem, QSizePolicy, QHBoxLayout, QLineEdit
 )
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
@@ -24,8 +24,8 @@ random.shuffle(pan_stimuli)
 
 # Wordlist Variables
 word_num = 0
-word_list = pan_stimuli
-#word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
+#word_list = pan_stimuli
+word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
 random.shuffle(word_list)
 
 #---------------------------------------------#
@@ -41,6 +41,50 @@ window.showFullScreen()
 layout = QVBoxLayout()
 layout.setAlignment(Qt.AlignCenter)
 
+
+
+
+
+#----------------Get User ID on prior screen-------------#
+
+
+user_id = "participant"     #variable to store it
+
+id_label = QLabel("Please enter your Name or ID to begin:", window)
+id_label.setFont(QFont("Verdana", 24))
+id_label.setAlignment(Qt.AlignCenter)
+
+id_input = QLineEdit(window)
+id_input.setFont(QFont("Verdana", 20))
+id_input.setFixedWidth(400)
+id_input.setPlaceholderText("e.g., jsmith123")
+id_input.setAlignment(Qt.AlignCenter)
+
+continue_button = QPushButton("Continue", window)
+continue_button.setFont(QFont("Verdana", 22))
+continue_button.setFixedSize(180, 50)
+continue_button.setStyleSheet("background-color: lightgreen; font-size: 18px;")
+
+
+# Container widget and layout for centering
+id_container = QWidget(window)
+id_layout = QVBoxLayout(id_container)
+id_layout.setAlignment(Qt.AlignCenter)
+
+
+id_layout.addSpacing(200)
+id_layout.addWidget(id_label, alignment=Qt.AlignCenter)
+id_layout.addSpacing(60)
+id_layout.addWidget(id_input, alignment=Qt.AlignCenter)
+id_layout.addSpacing(60)
+id_layout.addWidget(continue_button,alignment=Qt.AlignCenter)
+
+
+
+layout.addWidget(id_container, alignment=Qt.AlignCenter)
+
+
+
 #Used to export and keep track of word order
 phase0_word_order_list = []
 
@@ -52,6 +96,7 @@ instructions.setWordWrap(True)
 instructions.setAlignment(Qt.AlignCenter)
 instructions.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 layout.addWidget(instructions, alignment=Qt.AlignCenter)
+instructions.hide()
 
 # Word display label
 current_word = QLabel("")
@@ -69,6 +114,7 @@ start_button = QPushButton("Start")
 start_button.setFixedSize(140, 60)
 start_button.setStyleSheet("background-color: lightgreen; font-size: 20px; font-weight: bold;")
 layout.addWidget(start_button, alignment=Qt.AlignCenter)
+start_button.hide()
 
 # Space out back and next buttons
 button_layout = QHBoxLayout()
@@ -118,10 +164,31 @@ def display_next_word():
         next_button.hide()
 
 
-        with open('phase0_warmup_word_order.csv', 'w', newline='') as file:      #Download the .csv of all of the words once you have reached the end of the list
+
+        filename = f"{user_id}_phase0_warmup_word_order.csv"   #Download the .csv of all of the words once you have reached the end of the list
+        with open(filename, 'w', newline='') as file:
             writer = csv.writer(file)
             for word in phase0_word_order_list:
                 writer.writerow([word])
+
+
+
+def proceed_to_main_window():
+    global user_id
+    entered_id = id_input.text().strip()
+    if entered_id:
+        user_id = entered_id
+        layout.removeWidget(id_container)
+        id_container.deleteLater()  
+        instructions.show()
+        current_word.show()
+        start_button.show()   
+    else:     
+        return
+
+continue_button.clicked.connect(proceed_to_main_window)
+
+
 
 def start_experiment():
     instructions.hide()
@@ -139,6 +206,7 @@ def setup_previous_word():
     elif word_num == 1:
         word_num -= 1
     display_next_word()
+
 #---------------------------------------------#
 
 #---------------Connect Buttons---------------#
