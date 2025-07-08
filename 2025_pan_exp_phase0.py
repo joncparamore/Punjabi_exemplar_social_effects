@@ -21,6 +21,7 @@ import csv
 #---------------Import Stimuli and Shuffle Order---------------#
 pan_stimuli_df = pd.read_csv("pan_stimuli.csv")
 pan_stimuli = pan_stimuli_df.iloc[:, 0].tolist()
+
 random.shuffle(pan_stimuli)
 
 # Wordlist Variables
@@ -219,7 +220,7 @@ instructions.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 instructions.setMaximumWidth(1000)
 
 current_word = QLabel("")
-current_word.setFont(QFont("Noto Nastaliq Urdu", 75))
+current_word.setFont(QFont("Jameel Noori Nastaleeq", 75))
 current_word.setAlignment(Qt.AlignCenter)
 current_word.setContentsMargins(40, 0, 40, 0)
 current_word.hide()
