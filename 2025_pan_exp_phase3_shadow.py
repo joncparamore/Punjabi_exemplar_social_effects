@@ -54,8 +54,8 @@ with open(CSV_FILE, encoding="utf-8") as f:
 
 # Match the IPA words to the correct .wav files 
 
+from collections import defaultdict         #Creates a default dictionary with open space that way it's easier to append things to
 
-from collections import defaultdict
 
 match_ipa_to_file = defaultdict(list)
 
@@ -82,19 +82,15 @@ for shahmukhi_word, ipa_word in change_sh_to_ipa.items():
     else:
         print(f"No audio for IPA '{ipa_word}' (Shahmukhi '{shahmukhi_word}')")
 
+all_words = list(map_sh_to_audio.keys())
+random.shuffle(all_words)
 
-# Get only words that have both ATO and AK1 versions
-valid_words = [word for word in map_sh_to_audio if 
-               any(source == "ATO" for (_, source) in map_sh_to_audio[word]) and 
-               any(source == "ATO" for (_, source) in map_sh_to_audio[word])]
-
-random.shuffle(valid_words)
 
 #Basically take the words and split each list in half so that there are 4 sections that alternate between speakers
 
-half = len(valid_words) // 2
-first_half = valid_words[:half]
-second_half = valid_words[half:]
+half = len(all_words) // 2
+first_half = all_words[:half]
+second_half = all_words[half:]
 
 #split into ATO/AK1 versions
 block1 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "ATO")) for word in first_half]
@@ -102,31 +98,33 @@ block2 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "A
 block3 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "ATO")) for word in second_half]
 block4 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "AK1")) for word in second_half]
 
-# Final full list of words to present
+# Final full list of words to present. The program rotates so that each word is displayed 4 times
+
 
 audio_word_list = []
-audio_word_list += [("Section 1", None)] + block1
-audio_word_list += [("Section 2", None)] + block2
-audio_word_list += [("Section 3", None)] + block3
-audio_word_list += [("Section 4", None)] + block4
+audio_word_list += [("Section 1", "ATO")] + block1
+audio_word_list += [("Section 2", "AK1")] + block2
+audio_word_list += [("Section 3", "ATO")] + block3
+audio_word_list += [("Section 4", "AK1")] + block4
 
 
-audio_word_list += [("Section 5", None)] + block1
-audio_word_list += [("Section 6", None)] + block2
-audio_word_list += [("Section 7", None)] + block3
-audio_word_list += [("Section 8", None)] + block4
+audio_word_list += [("Section 5", "ATO")] + block1
+audio_word_list += [("Section 6", "AK1")] + block2
+audio_word_list += [("Section 7", "ATO")] + block3
+audio_word_list += [("Section 8", "AK1")] + block4
 
 
-audio_word_list += [("Section 9", None)] + block1
-audio_word_list += [("Section 10", None)] + block2
-audio_word_list += [("Section 11", None)] + block3
-audio_word_list += [("Section 12", None)] + block4
+audio_word_list += [("Section 9", "ATO")] + block1
+audio_word_list += [("Section 10", "AK1")] + block2
+audio_word_list += [("Section 11", "ATO")] + block3
+audio_word_list += [("Section 12","AK1")] + block4
 
 
-audio_word_list += [("Section 13", None)] + block1
-audio_word_list += [("Section 14", None)] + block2
-audio_word_list += [("Section 15", None)] + block3
-audio_word_list += [("Section 16", None)] + block4
+audio_word_list += [("Section 13", "ATO")] + block1
+audio_word_list += [("Section 14", "AK1")] + block2
+audio_word_list += [("Section 15", "ATO")] + block3
+audio_word_list += [("Section 16", "AK1")] + block4
+
 
 
 sound = QSoundEffect()
@@ -144,7 +142,7 @@ word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse
 random.shuffle(word_list)
 '''
 
-word_points_left = 60
+word_points_left = 90
 feedback_shown = False
 
 
@@ -193,7 +191,7 @@ continue_button.setFixedSize(180, 50)
 continue_button.setStyleSheet("background-color: lightgreen; font-size: 18px;")
 
 
-# Container widget and layout for centering
+#Add the ID elements to a container that way it's easier to make them all disappear
 id_container = QWidget(window)
 id_layout = QVBoxLayout(id_container)
 id_layout.setAlignment(Qt.AlignCenter)
@@ -207,9 +205,7 @@ id_layout.addSpacing(60)
 id_layout.addWidget(continue_button,alignment=Qt.AlignCenter)
 
 
-
 layout.addWidget(id_container, alignment=Qt.AlignCenter)
-
 
 
 def proceed_to_main_window():
@@ -226,8 +222,6 @@ def proceed_to_main_window():
         return
 
 continue_button.clicked.connect(proceed_to_main_window)
-
-
 
 
 #---------------Create Points---------------#
@@ -264,7 +258,7 @@ point_countdown.hide()
 
 timer=QTimer()
 timer.setInterval(100)      #Use 1 decisecond = 100 milliseconds
-deciseconds_left = 20
+deciseconds_left = 30
 
 
 clock = QLabel("", window)
@@ -328,41 +322,15 @@ layout.addSpacerItem(QSpacerItem(0, 80, QSizePolicy.Minimum, QSizePolicy.Preferr
 #---------------Add Images---------------#
 
 
+#Create a layout that contains both images, that way we can alternate between them later without doing .hide() and .show() which messes with the layout
 
+image_label = QLabel(window)
+image_label.setFixedSize(300, 300)  
+image_label.setAlignment(Qt.AlignCenter)
+image_label.hide()
 
-laborer_image = QLabel(window)
-
-
-pixmap = QPixmap("laborer.jpg")
-square_size = 300
-
-
-# Scale the image to a square, preserving aspect ratio and smooth edges
-scaled_pixmap = pixmap.scaled(square_size, square_size, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
-laborer_image.setPixmap(scaled_pixmap)
-laborer_image.resize(square_size, square_size)  # Resize label to match the square
-laborer_image.hide()
-
-
-scholar_image = QLabel(window)
-
-pixmap = QPixmap("scholar.jpg")
-if pixmap.isNull():
-    print("Failed to load scholar.jpg")
-square_size = 250
-
-# Scale the image to a square, preserving aspect ratio and smooth edges
-scaled_pixmap = pixmap.scaled(square_size, square_size, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
-scholar_image.setPixmap(scaled_pixmap)
-scholar_image.resize(square_size, square_size)  # Resize label to match the square
-scholar_image.hide()
-
-
-
-
-layout.addWidget(laborer_image, alignment=Qt.AlignCenter)
-layout.addWidget(scholar_image, alignment=Qt.AlignCenter)
-
+layout.addWidget(image_label, alignment=Qt.AlignCenter)
+layout.addSpacerItem(QSpacerItem(0, 200, QSizePolicy.Minimum, QSizePolicy.Preferred)) #spacing between point popup and curent word 
 
 
 
@@ -378,7 +346,7 @@ current_word.hide()
 
 layout.addSpacerItem(QSpacerItem(0, 100, QSizePolicy.Minimum, QSizePolicy.Preferred)) #spacing between point popup and curent word 
 layout.addWidget(current_word)
-
+layout.addSpacerItem(QSpacerItem(0, 200, QSizePolicy.Minimum, QSizePolicy.Preferred))   #Space from Clock/Point countdown to the point_popup
 
 
 #---------------Create Instructions for the first screen only---------------#
@@ -440,7 +408,7 @@ button_layout.addWidget(done_button)        # Add buttons to the layout
 button_layout.addWidget(next_button)
 button_layout.addStretch()
 
-layout.addSpacerItem(QSpacerItem(0, 60, QSizePolicy.Minimum, QSizePolicy.Preferred)) #Adds vertical space between teh Current Word and the done and next buttons
+layout.addSpacerItem(QSpacerItem(0, 150, QSizePolicy.Minimum, QSizePolicy.Preferred)) #Adds vertical space between teh Current Word and the done and next buttons
 layout.addWidget(button_container, alignment=Qt.AlignCenter)                   #Causes the container of buttons to be centrally aligned
 
 layout.addSpacerItem(QSpacerItem(0, 250, QSizePolicy.Minimum, QSizePolicy.Preferred))     #Adds space at bottom of screen underneath the Done and Next Buttons
@@ -528,14 +496,11 @@ def show_feedback():
     word_num+=1
 
  
+
  
-
- #---------------Function to Display Next Word---------------#
-#Function that causes each new word to be displayed after the "Next" button is pressed. Resets the format and shows the new word
-
-
-
 #---------------Function that Speaks the Word---------------#
+
+#Function that causes each new word to be displayed after the "Next" button is pressed. Resets the format and shows the new word
 
 
 
@@ -545,16 +510,17 @@ def next_word():
     done_button.setEnabled(False)
     next_button.hide()
     point_popup.setText("")
-    deciseconds_left = 20        #reset the clock and the points
-    word_points_left = 60
+    deciseconds_left = 30        #reset the clock and the points
+    word_points_left = 90
     
     if word_num >= len(audio_word_list):                     #Ending screen that only occurs once all words in the list have been said
         timer.stop()
         clock.hide()
         next_button.hide()
         done_button.hide()
-        laborer_image.show()
-        scholar_image.hide()
+        #laborer_image.show()
+        image_label.hide()
+        #scholar_image.hide()
         point_countdown.hide()
 
         current_word.setText("All finished!")
@@ -570,28 +536,31 @@ def next_word():
 
         
         filename = f"{user_id}_phase3_shadow_word_order.csv"   #Download the .csv of all of the words once you have reached the end of the list
-        with open(filename, 'w', newline='') as file:
+        with open(filename, 'w', newline='', encoding='utf-8-sig') as file:
             writer = csv.writer(file)
             for word in phase3_word_order_list:
                 writer.writerow([word])
 
 
     #If a section divider has been reached
-    if audio_word_list[word_num][1] is None:
+    if "Section" in audio_word_list[word_num][0]:
+        image_label.hide
         clock.hide()
         point_countdown.hide()
         next_button.hide()
         done_button.hide()
-        start_button.show()
+        start_button.show()                     #To move to the next button they click "start" which then runs the same starting function as before to set up for the words
         current_word.setFont(QFont("Verdana", 30))
-        if any(digit in audio_word_list[word_num][0] for digit in ("1", "3", "5", "7","9","11", "13", "15")):
-            laborer_image.show()
-            scholar_image.hide()
+        if "AK1" in audio_word_list[word_num][1]:
+            pixmap = QPixmap("laborer.jpg").scaled(300, 300, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+            image_label.setPixmap(pixmap)
+            image_label.show()
             current_word.setText(audio_word_list[word_num][0] + " of helping the laborer is about to begin") 
             current_word.show()
-        else:
-            scholar_image.show()
-            laborer_image.hide()
+        elif "ATO" in audio_word_list[word_num][1]:
+            pixmap = QPixmap("scholar.jpg").scaled(250, 250, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+            image_label.setPixmap(pixmap)
+            image_label.show()
             current_word.setText(audio_word_list[word_num][0] + " of helping the scholar is about to begin")
             current_word.show()
 
@@ -601,10 +570,10 @@ def next_word():
 
 
     if word_num < len(audio_word_list):
-        clock.setText("0.0   sec")                    #Reset the clock, begin the clock on the subsequent line
-        point_countdown.setText("60  pts")
-        current_word.setText("")  
-        #current_word.setText(audio_word_list[word_num][0])        #Do we want to show the word on the screen too?
+        clock.setText("3.0   sec")                    #Reset the clock, begin the clock on the subsequent line
+        point_countdown.setText("90  pts")
+        current_word.setText(audio_word_list[word_num][0])        #Do we want to show the word on the screen too?
+        current_word.setFont(QFont("Verdana", 40))
         phase3_word_order_list.append(audio_word_list[word_num])     #output word order into csv for later analysis
         word, (path, source) = audio_word_list[word_num]
         phase3_word_order_list.append(word)
@@ -613,12 +582,15 @@ def next_word():
         sound.play()
 
         # Show appropriate image based on source
-        if source == "ATO":
-            laborer_image.show()
-            scholar_image.hide()
-        elif source == "AK1":
-            scholar_image.show()
-            laborer_image.hide()
+        if source == "AK1":
+            pixmap = QPixmap("laborer.jpg").scaled(300, 300, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+            image_label.setPixmap(pixmap)
+            image_label.show()
+        elif source == "ATO":
+            pixmap = QPixmap("scholar.jpg").scaled(250, 250, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+            image_label.setPixmap(pixmap)
+            image_label.show()
+    
 
         def on_audio_finished():        #Only start clock and point countdown after the sound plays
             if not sound.isPlaying():
@@ -630,7 +602,7 @@ def next_word():
                 sound.playingChanged.disconnect(on_audio_finished)
         
         sound.playingChanged.connect(on_audio_finished)
-        word_num += 1
+
 
 
 
