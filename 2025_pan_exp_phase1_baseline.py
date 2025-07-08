@@ -42,9 +42,9 @@ app = QApplication([])
 
 word_num = 0
 
-#word_list = pan_stimuli
+word_list = pan_stimuli
 #word_list = eng_stimuli
-word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
+#word_list = ["ant", "bear", "cat", "dog", "elephant", "flamingo", "goat", "horse", "iguana", "jellyfish", "koala", "lion", "monkey", "narwhal", "orca", "panda", "quail", "rhino"]
 random.shuffle(word_list)
 
 
@@ -415,7 +415,7 @@ def display_next_word():
       current_word.setFont(QFont("Verdana", 80))
       current_word.adjustSize()
 
-      clock.setText("0.0   sec")                    #Reset the clock, begin the clock on the subsequent line
+      clock.setText("2.0   sec")                    #Reset the clock, begin the clock on the subsequent line
       timer.start()
 
 
