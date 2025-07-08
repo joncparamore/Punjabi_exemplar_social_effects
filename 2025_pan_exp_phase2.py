@@ -1,13 +1,13 @@
-import sys
-import csv
+import sys, csv, os
 import random
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import QTimer, Qt, QUrl
 from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.QtMultimedia import QSoundEffect
+from collections import defaultdict
 import pandas as pd
 
-
-#word list
+# Load word list
 pan_stimuli_df = pd.read_csv("pan_stimuli.csv")
 pan_stimuli = pan_stimuli_df.iloc[:, 0].tolist()
 
@@ -32,27 +32,18 @@ class TileGame(QWidget):
         self.screen_width = size.width()
         self.screen_height = size.height()
 
-        #Window settings
         self.setWindowTitle("Phase 2: Listening Task")
         self.setGeometry(0, 0, self.screen_width, self.screen_height)
 
-        #Scenario Information
         self.scenarios = {
-            "A": {
-                "name": "Laborer",
-                "starting_points": 1000,
-                "timeout_msg": "He couldn't learn that word.",
-                "wrong_msg": "He learned the wrong spelling."
-            },
-            "B": {
-                "name": "Scholar",
-                "starting_points": 100000,
-                "timeout_msg": "That word couldn't be added to the dictionary.",
-                "wrong_msg": "The wrong spelling was added to the dictionary."
-            }
+            "A": {"name": "Laborer", "starting_points": 1000,
+                  "timeout_msg": "He couldn't learn that word.",
+                  "wrong_msg": "He learned the wrong spelling."},
+            "B": {"name": "Scholar", "starting_points": 100000,
+                  "timeout_msg": "That word couldn't be added to the dictionary.",
+                  "wrong_msg": "The wrong spelling was added to the dictionary."}
         }
 
-        #trial setup
         self.word_list = pan_stimuli.copy()
         random.shuffle(self.word_list)
         self.trials = build_trial_blocks(self.word_list)
@@ -65,27 +56,52 @@ class TileGame(QWidget):
         }
         self.max_points_per_trial = 50
         self.tile_buttons = []
-
-        # List to track correct answer order
         self.correct_answer_order = []
+
+        self.sound = QSoundEffect()
+        self.map_sh_to_audio = self.load_audio_mappings()
+
+        self.audio_played = False
+        self.replay_used = False
 
         self.setup_ui()
 
-    #scaling
-    def scale_w(self, x_ratio):
-        return int(self.screen_width * x_ratio)
+    def load_audio_mappings(self):
+        change_sh_to_ipa = {}
+        with open("tokens_shahmukhi_ipa.csv", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                shahmukhi_word = row[list(reader.fieldnames)[0]].strip()
+                ipa_word = row["IPA"].strip()
+                change_sh_to_ipa[shahmukhi_word] = ipa_word
 
-    def scale_h(self, y_ratio):
-        return int(self.screen_height * y_ratio)
+        ato_audio_directory = "2025_pan_AT0"
+        ak_audio_directory = "2025_pan_AK1"
+        match_ipa_to_file = defaultdict(list)
+
+        for directory in [ato_audio_directory, ak_audio_directory]:
+            for file_name in os.listdir(directory):
+                if file_name.endswith(".wav"):
+                    ipa_word = file_name.split("_")[-1].replace(".wav", "").strip()
+                    full_path = os.path.join(directory, file_name)
+                    match_ipa_to_file[ipa_word].append(full_path)
+
+        map_sh_to_audio = {}
+        for sh_word, ipa in change_sh_to_ipa.items():
+            paths = match_ipa_to_file.get(ipa, [])
+            if paths:
+                map_sh_to_audio[sh_word] = paths[0]
+        return map_sh_to_audio
+
+    def scale_w(self, x_ratio): return int(self.screen_width * x_ratio)
+    def scale_h(self, y_ratio): return int(self.screen_height * y_ratio)
 
     def setup_ui(self):
-        #title screen
         self.phase2_title = QLabel("Phase 2: Listening", self)
         self.phase2_title.setFont(QFont("Verdana", self.scale_w(0.05)))
         self.phase2_title.adjustSize()
         self.phase2_title.move((self.screen_width - self.phase2_title.width()) // 2, self.scale_h(0.4))
 
-        #instructions text
         self.instructions = QLabel("", self)
         self.instructions.setFont(QFont("Verdana", self.scale_w(0.016)))
         self.instructions.setWordWrap(True)
@@ -93,7 +109,6 @@ class TileGame(QWidget):
         self.instructions.move((self.screen_width - self.instructions.width()) // 2, self.scale_h(0.55))
         self.instructions.hide()
 
-        #start/next button
         self.next_button = QPushButton("Start", self)
         self.next_button.setFont(QFont("Verdana", self.scale_w(0.018)))
         self.next_button.resize(self.scale_w(0.15), self.scale_h(0.07))
@@ -101,27 +116,31 @@ class TileGame(QWidget):
         self.next_button.setStyleSheet("background-color: lightgray; border-radius: 10px;")
         self.next_button.clicked.connect(self.start_first_instruction)
 
-        #character points 
+        self.play_word_button = QPushButton("Play Word", self)
+        self.play_word_button.setFont(QFont("Verdana", self.scale_w(0.018)))
+        self.play_word_button.resize(self.scale_w(0.15), self.scale_h(0.07))
+        self.play_word_button.move((self.screen_width - self.play_word_button.width()) // 2, self.scale_h(0.70))
+        self.play_word_button.setStyleSheet("background-color: lightblue; border-radius: 10px;")
+        self.play_word_button.clicked.connect(self.handle_play_word)
+        self.play_word_button.hide()
+
         self.char_points_label = QLabel(self)
         self.char_points_label.setFont(QFont("Verdana", self.scale_w(0.014)))
         self.char_points_label.move(self.scale_w(0.02), self.scale_h(0.06))
         self.char_points_label.resize(self.scale_w(0.2), 30)
         self.char_points_label.hide()
 
-        #character icon
         icon_size = self.scale_w(0.125)
         self.char_icon = QLabel(self)
         self.char_icon.resize(icon_size, icon_size)
         self.char_icon.hide()
 
-        #total points
         self.total_points_label = QLabel(f"Total Points: {self.points}", self)
         self.total_points_label.setFont(QFont("Verdana", self.scale_w(0.016)))
         self.total_points_label.move(self.screen_width - self.scale_w(0.22), self.scale_h(0.06))
         self.total_points_label.resize(self.scale_w(0.2), 30)
         self.total_points_label.hide()
 
-        #countdown timer
         self.clock = QLabel("", self)
         self.clock.setFont(QFont("Verdana", self.scale_w(0.014)))
         self.clock.setStyleSheet("background-color: lightgrey; border: 2px solid gray; padding: 8px; border-radius: 5px;")
@@ -136,13 +155,11 @@ class TileGame(QWidget):
         self.point_countdown.move(self.screen_width - self.scale_w(0.22), self.scale_h(0.20))
         self.point_countdown.hide()
 
-        #feedback
         self.points_label = QLabel("", self)
         self.points_label.setFont(QFont("Verdana", self.scale_w(0.012)))
         self.points_label.resize(700, 40)
         self.points_label.move((self.screen_width - 500) // 2, self.scale_h(0.18))
 
-        #timer setup
         self.timer = QTimer()
         self.timer.setInterval(100)
         self.timer.timeout.connect(self.update_timer)
@@ -165,13 +182,11 @@ class TileGame(QWidget):
             self.instructions.adjustSize()
             self.instructions.show()
 
-            #hide ui
             self.clock.hide()
             self.point_countdown.hide()
             self.char_points_label.hide()
             self.total_points_label.hide()
 
-            # Icon placement
             if self.current_speaker == "B":
                 scholar_size = self.scale_w(0.28)
                 self.char_icon.resize(scholar_size, scholar_size)
@@ -196,27 +211,58 @@ class TileGame(QWidget):
     def start_block(self):
         self.instructions.hide()
         self.next_button.hide()
-        self.char_icon.hide()
-        self.char_points_label.show()
-        self.total_points_label.show()
-        self.clock.show()
-        self.point_countdown.show()
 
-        #smaller icon during tiles
+        # ✅ Show LARGE character image again (same as instructions)
         if self.current_speaker == "B":
-            small_size = self.scale_w(0.18)
-            self.char_icon.resize(small_size, small_size)
-            self.char_icon.move(self.scale_w(0.02), self.scale_h(0.08))
+            scholar_size = self.scale_w(0.28)
+            self.char_icon.resize(scholar_size, scholar_size)
+            self.char_icon.move(self.scale_w(0.365), self.scale_h(0.15))
         else:
-            small_size = self.scale_w(0.14)
-            self.char_icon.resize(small_size, small_size)
-            self.char_icon.move(self.scale_w(0.02), self.scale_h(0.12))
+            normal_size = self.scale_w(0.225)
+            self.char_icon.resize(normal_size, normal_size)
+            self.char_icon.move(self.scale_w(0.3875), self.scale_h(0.15))
 
         pixmap = QPixmap("laborer.jpg") if self.current_speaker == "A" else QPixmap("scholar.jpg")
         pixmap = pixmap.scaled(self.char_icon.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.char_icon.setPixmap(pixmap)
         self.char_icon.show()
-        self.next_trial()
+
+        # ✅ Hide everything else
+        self.char_points_label.hide()
+        self.total_points_label.hide()
+        self.clock.hide()
+        self.point_countdown.hide()
+        self.points_label.hide()
+        self.clear_existing_tiles()
+
+        self.audio_played = False
+        self.replay_used = False
+        self.play_word_button.setEnabled(True)
+        self.play_word_button.show()
+
+
+
+    def handle_play_word(self):
+        _, self.target_word = self.trials[self.trial_counter]
+        audio_path = self.map_sh_to_audio.get(self.target_word, None)
+        if not audio_path:
+            return
+        self.sound.setSource(QUrl.fromLocalFile(audio_path))
+        self.sound.play()
+
+        if not self.audio_played:
+            self.audio_played = True
+            def after_audio():
+                if not self.sound.isPlaying():
+                    self.sound.playingChanged.disconnect(after_audio)
+                    self.play_word_button.hide()
+                    self.next_trial()
+            self.sound.playingChanged.connect(after_audio)
+        else:
+            if not self.replay_used:
+                self.replay_used = True
+            else:
+                self.play_word_button.setEnabled(False)
 
     def next_trial(self):
         if self.trial_counter >= self.total_trials:
@@ -238,10 +284,10 @@ class TileGame(QWidget):
 
             y_base = 160
             for label_text in [
-                f"Your Points: {self.points}",
-                f"Laborer: {self.character_points['A']}",
-                f"Scholar: {self.character_points['B']}"
-            ]:
+                    f"Your Points: {self.points}",
+                    f"Laborer: {self.character_points['A']}",
+                    f"Scholar: {self.character_points['B']}"
+                    ]:
                 label = QLabel(label_text, self)
                 label.setFont(QFont("Verdana", self.scale_w(0.015)))
                 label.setStyleSheet("background-color: lightgreen; padding: 6px; border-radius: 5px")
@@ -252,15 +298,37 @@ class TileGame(QWidget):
             return
 
         self.current_speaker, self.target_word = self.trials[self.trial_counter]
-        self.correct_answer_order.append(self.target_word)  # Track target word
+        self.correct_answer_order.append(self.target_word)
         scenario = self.scenarios[self.current_speaker]
+
+        # ✅ Resize/reposition character image to SMALL version now
+        if self.current_speaker == "B":
+            small_size = self.scale_w(0.18)
+            self.char_icon.resize(small_size, small_size)
+            self.char_icon.move(self.scale_w(0.02), self.scale_h(0.08))
+        else:
+            small_size = self.scale_w(0.14)
+            self.char_icon.resize(small_size, small_size)
+            self.char_icon.move(self.scale_w(0.02), self.scale_h(0.12))
+
+        pixmap = QPixmap("laborer.jpg") if self.current_speaker == "A" else QPixmap("scholar.jpg")
+        pixmap = pixmap.scaled(self.char_icon.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.char_icon.setPixmap(pixmap)
+        self.char_icon.show()
+
+        # ✅ Show character and total points labels now (not earlier)
         self.char_points_label.setText(f"{scenario['name']} Points: {self.character_points[self.current_speaker]}")
         self.total_points_label.setText(f"Total Points: {self.points}")
+        self.total_points_label.show()
+        self.points_label.show()
+        self.char_points_label.show()
+
         self.trial_counter += 1
         self.points_label.setText("")
         self.elapsed_deciseconds = 0
         self.clock.setText("0.0 sec")
         self.point_countdown.setText(f"{self.max_points_per_trial} pts")
+
         self.create_tiles()
         self.clock.show()
         self.point_countdown.show()
