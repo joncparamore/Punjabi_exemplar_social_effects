@@ -79,19 +79,28 @@ class TileGame(QWidget):
         ak_audio_directory = "2025_pan_AK1"
         match_ipa_to_file = defaultdict(list)
 
-        for directory in [ato_audio_directory, ak_audio_directory]:
-            for file_name in os.listdir(directory):
-                if file_name.endswith(".wav"):
-                    ipa_word = file_name.split("_")[-1].replace(".wav", "").strip()
-                    full_path = os.path.join(directory, file_name)
-                    match_ipa_to_file[ipa_word].append(full_path)
+        for file_name in os.listdir(ato_audio_directory):
+            if file_name.endswith(".wav"):
+                ipa_word = file_name.split("_")[-1].replace(".wav", "").strip()
+                full_path = os.path.join(ato_audio_directory, file_name)
+                match_ipa_to_file[ipa_word].append((full_path, "ATO"))
 
+        for file_name in os.listdir(ak_audio_directory):
+            if file_name.endswith(".wav"):
+                ipa_word = file_name.split("_")[-1].replace(".wav", "").strip()
+                full_path = os.path.join(ak_audio_directory, file_name)
+                match_ipa_to_file[ipa_word].append((full_path, "AK1"))
+
+        # Only include words that have BOTH versions
         map_sh_to_audio = {}
         for sh_word, ipa in change_sh_to_ipa.items():
             paths = match_ipa_to_file.get(ipa, [])
-            if paths:
-                map_sh_to_audio[sh_word] = paths[0]
+            has_ato = any(src == "ATO" for (_, src) in paths)
+            has_ak1 = any(src == "AK1" for (_, src) in paths)
+            if has_ato and has_ak1:
+                map_sh_to_audio[sh_word] = {src: path for (path, src) in paths}
         return map_sh_to_audio
+
 
     def scale_w(self, x_ratio): return int(self.screen_width * x_ratio)
     def scale_h(self, y_ratio): return int(self.screen_height * y_ratio)
@@ -212,7 +221,7 @@ class TileGame(QWidget):
         self.instructions.hide()
         self.next_button.hide()
 
-        # ✅ Show LARGE character image again (same as instructions)
+        # Show LARGE character image again (same as instructions)
         if self.current_speaker == "B":
             scholar_size = self.scale_w(0.28)
             self.char_icon.resize(scholar_size, scholar_size)
@@ -227,7 +236,7 @@ class TileGame(QWidget):
         self.char_icon.setPixmap(pixmap)
         self.char_icon.show()
 
-        # ✅ Hide everything else
+        # Hide everything else
         self.char_points_label.hide()
         self.total_points_label.hide()
         self.clock.hide()
@@ -244,7 +253,10 @@ class TileGame(QWidget):
 
     def handle_play_word(self):
         _, self.target_word = self.trials[self.trial_counter]
-        audio_path = self.map_sh_to_audio.get(self.target_word, None)
+        audio_entry = self.map_sh_to_audio.get(self.target_word, {})
+        source = "AK1" if self.current_speaker == "A" else "ATO"
+        audio_path = audio_entry.get(source, None)
+
         if not audio_path:
             return
         self.sound.setSource(QUrl.fromLocalFile(audio_path))
@@ -301,7 +313,7 @@ class TileGame(QWidget):
         self.correct_answer_order.append(self.target_word)
         scenario = self.scenarios[self.current_speaker]
 
-        # ✅ Resize/reposition character image to SMALL version now
+        # Resize/reposition character image to SMALL version now
         if self.current_speaker == "B":
             small_size = self.scale_w(0.18)
             self.char_icon.resize(small_size, small_size)
@@ -316,7 +328,7 @@ class TileGame(QWidget):
         self.char_icon.setPixmap(pixmap)
         self.char_icon.show()
 
-        # ✅ Show character and total points labels now (not earlier)
+        # Show character and total points labels now (not earlier)
         self.char_points_label.setText(f"{scenario['name']} Points: {self.character_points[self.current_speaker]}")
         self.total_points_label.setText(f"Total Points: {self.points}")
         self.total_points_label.show()
