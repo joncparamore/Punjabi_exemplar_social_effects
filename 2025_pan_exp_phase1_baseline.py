@@ -414,7 +414,7 @@ def display_next_word():
   
     if word_num < len(word_list):                                   #if we are still in the bounds of the list
       current_word.setText(word_list[word_num])
-      current_word.setFont(QFont("Verdana", 80))
+      current_word.setFont(QFont("Jameel Noori Nastaleeq", 80))
       current_word.adjustSize()
 
       clock.setText("2.0   sec")                    #Reset the clock, begin the clock on the subsequent line
