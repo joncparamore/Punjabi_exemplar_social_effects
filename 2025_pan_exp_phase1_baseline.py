@@ -34,6 +34,8 @@ eng_stimuli_df = pd.read_csv("eng_test_words.csv")  # Read the CSV into a DataFr
 eng_stimuli = eng_stimuli_df.iloc[:, 0].tolist()
 
 
+QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+
 app = QApplication([])
 
 
@@ -142,7 +144,7 @@ total_points.setStyleSheet("color:DarkSlateGray")
 total_points.adjustSize()
 
 total_points_top_bar = QHBoxLayout()
-total_points_top_bar.setContentsMargins(0, 30, 30, 0)  # top, right padding
+total_points_top_bar.setContentsMargins(0, 60, 100, 0)  # top, right padding
 layout.addLayout(total_points_top_bar)
 layout.setAlignment(Qt.AlignTop)
 
@@ -155,7 +157,7 @@ total_points.hide()
 
 point_countdown = QLabel("", window)    #Point countdown box that constantly decreases next to the clock
 point_countdown.setAlignment(Qt.AlignCenter)
-point_countdown.setFixedSize(200, 66)
+point_countdown.setFixedSize(200, 80)
 point_countdown.setFont(QFont("Verdana", 22))
 point_countdown.setStyleSheet("background-color: lightgrey; padding: 20px; border: 2 px; border-radius: 5px")
 point_countdown.hide()
@@ -172,7 +174,7 @@ clock = QLabel("", window)
 clock.setAlignment(Qt.AlignCenter)
 clock.setFont(QFont("Verdana", 22))
 clock.setStyleSheet("background-color: lightgrey; border: 2 px; padding: 20px; border-radius: 5px")
-clock.setFixedSize(200, 66)
+clock.setFixedSize(200, 80)
 clock.hide()
 
 
