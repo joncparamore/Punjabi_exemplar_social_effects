@@ -1,24 +1,28 @@
 import sys, csv, os
 import random
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QInputDialog, QVBoxLayout, QHBoxLayout, QSizePolicy, QSpacerItem
 from PyQt5.QtCore import QTimer, Qt, QUrl
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtMultimedia import QSoundEffect
 from collections import defaultdict
-import pandas as pd
 
 
 def build_trial_blocks(word_list, block_size=5):
+    # Shuffle word list to randomize order
+    random.shuffle(word_list)
+
+    # Create word lists for each speaker
+    speaker_a = [("A", word) for word in word_list]
+    speaker_b = [("B", word) for word in word_list]
+
     trials = []
     total_words = len(word_list)
-    num_blocks = (total_words + block_size - 1) // block_size
-    for block_index in range(num_blocks):
-        start = block_index * block_size
-        end = min(start + block_size, total_words)
-        block_words = word_list[start:end]
-        speaker = "A" if block_index % 2 == 0 else "B"
-        for word in block_words:
-            trials.append((speaker, word))
+
+    # Interleave blocks by speaker
+    for i in range(0, total_words, block_size):
+        trials.extend(speaker_a[i:i+block_size])
+        trials.extend(speaker_b[i:i+block_size])
+
     return trials
 
 
@@ -33,6 +37,7 @@ class TileGame(QWidget):
         self.setWindowTitle("Phase 2: Listening Task")
         self.setGeometry(0, 0, self.screen_width, self.screen_height)
 
+        #character info
         self.scenarios = {
             "A": {"name": "Laborer", "starting_points": 1000,
                   "timeout_msg": "He couldn't learn that word.",
@@ -42,14 +47,14 @@ class TileGame(QWidget):
                   "wrong_msg": "The wrong spelling was added to the dictionary."}
         }
 
-        # Load both valid Shahmukhi words and the corresponding audio map
+        # Load words and corresponding audio
         self.word_list, self.map_sh_to_audio = self.load_audio_mappings()
         random.shuffle(self.word_list)
 
         self.trials = build_trial_blocks(self.word_list)
         self.total_trials = len(self.trials)
 
-        # ✅ Initialize all game state attributes
+        # Game state attributes
         self.audio_played = False
         self.replay_used = False
         self.trial_counter = 0
@@ -63,6 +68,7 @@ class TileGame(QWidget):
         self.setup_ui()
 
 
+    # Load audio and map words
     def load_audio_mappings(self):
         change_sh_to_ipa = {}
         with open("tokens_shahmukhi_ipa.csv", encoding="utf-8") as f:
@@ -105,6 +111,7 @@ class TileGame(QWidget):
     def scale_w(self, x_ratio): return int(self.screen_width * x_ratio)
     def scale_h(self, y_ratio): return int(self.screen_height * y_ratio)
 
+    # UI formatting
     def setup_ui(self):
         self.phase2_title = QLabel("Phase 2: Listening", self)
         self.phase2_title.setFont(QFont("Verdana", self.scale_w(0.05)))
@@ -173,12 +180,18 @@ class TileGame(QWidget):
         self.timer.setInterval(100)
         self.timer.timeout.connect(self.update_timer)
         self.elapsed_deciseconds = 0
-
+        
+    # instructions logic
     def start_first_instruction(self):
         self.phase2_title.hide()
         self.show_block_instruction()
 
+    # shows instructions every 5, preps character image and text
     def show_block_instruction(self):
+        if self.trial_counter >= self.total_trials:
+            self.next_trial()
+            return
+        
         block_size = 5
         if self.trial_counter % block_size == 0 and self.trial_counter < self.total_trials:
             self.clear_existing_tiles()
@@ -217,11 +230,12 @@ class TileGame(QWidget):
         else:
             self.start_block()
 
+    #starts actual trial
     def start_block(self):
         self.instructions.hide()
         self.next_button.hide()
 
-        # Show LARGE character image again (same as instructions)
+        # Show large character image 
         if self.current_speaker == "B":
             scholar_size = self.scale_w(0.28)
             self.char_icon.resize(scholar_size, scholar_size)
@@ -250,32 +264,55 @@ class TileGame(QWidget):
         self.play_word_button.show()
 
 
-
+    # audio playback logic
     def handle_play_word(self):
         _, self.target_word = self.trials[self.trial_counter]
+        print(f"\n Target word: {self.target_word}")
+
         audio_entry = self.map_sh_to_audio.get(self.target_word, {})
+        print(f" Audio entry found: {audio_entry}")
+
         source = "AK1" if self.current_speaker == "A" else "ATO"
+        print(f" Speaker source: {source}")
+
         audio_path = audio_entry.get(source, None)
+        print(f" Audio path: {audio_path}")
 
         if not audio_path:
+            print(" ERROR: No audio path found for this word.")
             return
+
+        # Check if file actually exists
+        import os
+        if not os.path.exists(audio_path):
+            print(f" ERROR: Audio file does NOT exist: {audio_path}")
+            return
+        else:
+            print(" Audio file exists.")
+
         self.sound.setSource(QUrl.fromLocalFile(audio_path))
+        print(f" Sound status after setSource: {self.sound.status()}")  # Should be 2 for Ready
+
         self.sound.play()
 
         if not self.audio_played:
             self.audio_played = True
+
             def after_audio():
                 if not self.sound.isPlaying():
                     self.sound.playingChanged.disconnect(after_audio)
                     self.play_word_button.hide()
                     self.next_trial()
+
             self.sound.playingChanged.connect(after_audio)
+
         else:
             if not self.replay_used:
                 self.replay_used = True
             else:
                 self.play_word_button.setEnabled(False)
 
+    # trial logic
     def next_trial(self):
         if self.trial_counter >= self.total_trials:
             self.save_csv_output()  
@@ -346,12 +383,15 @@ class TileGame(QWidget):
         self.point_countdown.show()
         self.timer.start()
 
+    # CSV output
     def save_csv_output(self):
-        with open("phase2_correct_order.csv", "w", newline='') as file:
+        filename = f"phase2_correct_order_{self.user_id}.csv"
+        with open(filename, "w", newline='') as file:
             writer = csv.writer(file)
             for word in self.correct_answer_order:
                 writer.writerow([word])
 
+    # Generate tile grid
     def create_tiles(self):
         self.clear_existing_tiles()
         distractors = random.sample([w for w in self.word_list if w != self.target_word], 15)
@@ -377,6 +417,7 @@ class TileGame(QWidget):
             tile.show()
             self.tile_buttons.append(tile)
 
+    # Timer countdown
     def update_timer(self):
         self.elapsed_deciseconds += 1
         seconds = self.elapsed_deciseconds / 10
@@ -430,12 +471,22 @@ class TileGame(QWidget):
             tile.deleteLater()
         self.tile_buttons.clear()
 
+    # Exit shortcut
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.showNormal()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
+    # Prompt for user ID
+    user_id, ok = QInputDialog.getText(None, "Participant ID", "Enter your User ID:")
+    if not ok or not user_id.strip():
+        print("User ID is required to proceed.")
+        sys.exit()
+
     window = TileGame()
+    window.user_id = user_id.strip()  # store in the app window
     window.showFullScreen()
+
     sys.exit(app.exec_())
