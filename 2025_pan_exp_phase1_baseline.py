@@ -155,7 +155,7 @@ total_points.hide()
 
 point_countdown = QLabel("", window)    #Point countdown box that constantly decreases next to the clock
 point_countdown.setAlignment(Qt.AlignCenter)
-point_countdown.setFixedSize(135, 66)
+point_countdown.setFixedSize(200, 66)
 point_countdown.setFont(QFont("Verdana", 22))
 point_countdown.setStyleSheet("background-color: lightgrey; padding: 20px; border: 2 px; border-radius: 5px")
 point_countdown.hide()
@@ -172,7 +172,7 @@ clock = QLabel("", window)
 clock.setAlignment(Qt.AlignCenter)
 clock.setFont(QFont("Verdana", 22))
 clock.setStyleSheet("background-color: lightgrey; border: 2 px; padding: 20px; border-radius: 5px")
-clock.setFixedSize(135, 66)
+clock.setFixedSize(200, 66)
 clock.hide()
 
 
@@ -218,7 +218,7 @@ layout.addWidget(clock_point_container, alignment=Qt.AlignCenter)               
 
 
 point_popup = QLabel("", window)    #Point popup text that appears after clicking "next"
-point_popup.setFixedSize(600, 80)
+point_popup.setFixedSize(2000, 80)
 point_popup.setAlignment(Qt.AlignCenter)
 
 layout.addSpacerItem(QSpacerItem(0, 60, QSizePolicy.Minimum, QSizePolicy.Preferred))   #Space from Clock/Point countdown to the point_popup
@@ -231,9 +231,9 @@ layout.addWidget(point_popup, alignment=Qt.AlignCenter)
 
 current_word = QLabel("Phase 1: Baseline Reading", window)
 current_word.setFont(QFont("Verdana", 50))
-current_word.adjustSize()
 current_word.setAlignment(Qt.AlignCenter)
 current_word.setContentsMargins(40, 0, 40, 0)  # 40px side padding
+current_word.adjustSize()
 current_word.hide()
 
 layout.addSpacerItem(QSpacerItem(0, 100, QSizePolicy.Minimum, QSizePolicy.Preferred)) #spacing between point popup and curent word 
