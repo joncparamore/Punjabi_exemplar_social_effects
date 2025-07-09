@@ -229,6 +229,12 @@ class TileGame(QWidget):
         main_layout.setAlignment(Qt.AlignCenter)
         main_layout.addWidget(self.id_container)
         self.setLayout(main_layout)
+        
+        self.target_word_label = QLabel("", self)
+        self.target_word_label.setFont(QFont("Jameel Noori Nastaleeq", self.scale_w(0.03)))
+        self.target_word_label.setAlignment(Qt.AlignCenter)
+        self.target_word_label.setGeometry(0, self.scale_h(0.28), self.screen_width, self.scale_h(0.1))
+        self.target_word_label.hide()
     
     def collect_user_id(self):
         entered_id = self.id_input.text().strip()
@@ -258,6 +264,7 @@ class TileGame(QWidget):
             self.clear_existing_tiles()
             self.timer.stop()
             self.points_label.clear()
+            self.target_word_label.hide()
             self.current_speaker, _ = self.trials[self.trial_counter]
             text = ("You will hear a series of spoken words. After each word, click the matching word tile "
                     f"to help {self.scenarios[self.current_speaker]['name']} complete their goal.")
@@ -318,6 +325,7 @@ class TileGame(QWidget):
         self.point_countdown.hide()
         self.points_label.hide()
         self.clear_existing_tiles()
+        self.target_word_label.hide()
 
         self.audio_played = False
         self.replay_used = False
@@ -469,7 +477,7 @@ class TileGame(QWidget):
         for i, word in enumerate(self.tile_words):
             tile = QPushButton(word, self)
             tile.resize(tile_width, tile_height)
-            tile.setFont(QFont("Verdana", self.scale_w(0.012)))
+            tile.setFont(QFont("Jameel Noori Nastaleeq", self.scale_w(0.018)))
             tile.setStyleSheet("background-color: lightgray; border-radius: 12px;")
             row = i // cols
             col = i % cols
