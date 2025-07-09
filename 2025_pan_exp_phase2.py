@@ -1,6 +1,6 @@
 import sys, csv, os
 import random
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QInputDialog, QVBoxLayout, QHBoxLayout, QSizePolicy, QSpacerItem
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QLineEdit
 from PyQt5.QtCore import QTimer, Qt, QUrl
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtMultimedia import QSoundEffect
@@ -66,6 +66,17 @@ class TileGame(QWidget):
         self.sound = QSoundEffect()
 
         self.setup_ui()
+        
+        # Hide all game UI initially
+        self.phase2_title.hide()
+        self.next_button.hide()
+        self.play_word_button.hide()
+        self.char_points_label.hide()
+        self.total_points_label.hide()
+        self.clock.hide()
+        self.point_countdown.hide()
+        self.points_label.hide()
+        self.char_icon.hide()
 
 
     # Load audio and map words
@@ -180,6 +191,56 @@ class TileGame(QWidget):
         self.timer.setInterval(100)
         self.timer.timeout.connect(self.update_timer)
         self.elapsed_deciseconds = 0
+        
+        self.user_id = None
+
+        # ID Entry UI
+        self.id_container = QWidget(self)
+        id_layout = QVBoxLayout(self.id_container)
+        id_layout.setAlignment(Qt.AlignCenter)
+
+        self.id_label = QLabel("Please enter your Name or ID to begin:", self)
+        self.id_label.setFont(QFont("Verdana", self.scale_w(0.025)))
+        self.id_label.setAlignment(Qt.AlignCenter)
+
+        self.id_input = QLineEdit(self)
+        self.id_input.setFont(QFont("Verdana", self.scale_w(0.02)))
+        self.id_input.setFixedWidth(self.scale_w(0.4))
+        self.id_input.setPlaceholderText("e.g., jsmith123")
+        self.id_input.setAlignment(Qt.AlignCenter)
+
+        self.continue_button = QPushButton("Continue", self)
+        self.continue_button.setFont(QFont("Verdana", self.scale_w(0.02)))
+        self.continue_button.setFixedSize(self.scale_w(0.15), self.scale_h(0.08))
+        self.continue_button.setStyleSheet("background-color: lightgreen;")
+        self.continue_button.clicked.connect(self.collect_user_id)
+
+        id_layout.addSpacing(self.scale_h(0.2))
+        id_layout.addWidget(self.id_label, alignment=Qt.AlignCenter)
+        id_layout.addSpacing(self.scale_h(0.05))
+        id_layout.addWidget(self.id_input, alignment=Qt.AlignCenter)
+        id_layout.addSpacing(self.scale_h(0.05))
+        id_layout.addWidget(self.continue_button, alignment=Qt.AlignCenter)
+
+
+        self.id_container.setLayout(id_layout)
+        
+        main_layout = QVBoxLayout(self)
+        main_layout.setAlignment(Qt.AlignCenter)
+        main_layout.addWidget(self.id_container)
+        self.setLayout(main_layout)
+    
+    def collect_user_id(self):
+        entered_id = self.id_input.text().strip()
+        if entered_id:
+            self.user_id = entered_id
+            self.id_container.hide()
+            self.phase2_title.show()
+            self.next_button.show()
+        else:
+            self.id_label.setText("⚠ Please enter your ID to proceed")
+
+
         
     # instructions logic
     def start_first_instruction(self):
@@ -479,14 +540,7 @@ class TileGame(QWidget):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    # Prompt for user ID
-    user_id, ok = QInputDialog.getText(None, "Participant ID", "Enter your User ID:")
-    if not ok or not user_id.strip():
-        print("User ID is required to proceed.")
-        sys.exit()
-
     window = TileGame()
-    window.user_id = user_id.strip()  # store in the app window
     window.showFullScreen()
 
     sys.exit(app.exec_())
