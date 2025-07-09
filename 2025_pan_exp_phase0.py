@@ -30,10 +30,19 @@ word_list = pan_stimuli
 random.shuffle(word_list)
 
 #---------------Initialize app and window---------------#
+class Phase0Window(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Warmup")
+        self.showFullScreen()
+
+    #escape button
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.showNormal()
+
 app = QApplication([])
-window = QWidget()
-window.setWindowTitle("Warmup")
-window.showFullScreen()
+window = Phase0Window()
 
 layout = QVBoxLayout()
 layout.setAlignment(Qt.AlignCenter)
