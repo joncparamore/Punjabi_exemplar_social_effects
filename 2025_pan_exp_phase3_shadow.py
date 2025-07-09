@@ -39,6 +39,10 @@ eng_stimuli = eng_stimuli_df.iloc[:, 0].tolist()
 
 app = QApplication([])
 
+class EscapeWindow(QWidget):
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.showNormal()  # Exit fullscreen
 
 #----------MAPPING TO THE AUIO FILES------------#
 
@@ -152,7 +156,9 @@ phase3_word_order_list = []
 
 #---------------Create Window---------------#
 
-window = QWidget()
+#window = QWidget()
+window = EscapeWindow()
+window.setFocusPolicy(Qt.StrongFocus)
 #main_layout = QVBoxLayout(window)
 
 
@@ -612,6 +618,8 @@ def next_word():
 start_button.clicked.connect(start_program)     #When "Start" is clicked, the GUI sets up to the word configuration (mostly just aesthetic stuff (dis)appearing)
 done_button.clicked.connect(show_feedback)      #When "Done" is clicked, signalling the participant has said the word, feedback/points are given
 next_button.clicked.connect(next_word)    #When "Next" is clicked, the screen moves on to the next word
+
+
 
 
 

@@ -60,7 +60,13 @@ phase1_word_order_list = []
 
 #---------------Create Window---------------#
 
-window = QWidget()
+class BaselineWindow(QWidget):
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.showNormal()
+
+window = BaselineWindow()
+
 #main_layout = QVBoxLayout(window)
 
 
