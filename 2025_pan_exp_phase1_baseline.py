@@ -144,7 +144,7 @@ total_points.setStyleSheet("color:DarkSlateGray")
 total_points.adjustSize()
 
 total_points_top_bar = QHBoxLayout()
-total_points_top_bar.setContentsMargins(0, 60, 130, 0)  # top, right padding
+total_points_top_bar.setContentsMargins(0, 60, 145, 0)  # top, right padding
 layout.addLayout(total_points_top_bar)
 layout.setAlignment(Qt.AlignTop)
 
