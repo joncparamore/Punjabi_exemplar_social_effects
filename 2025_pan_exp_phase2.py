@@ -7,9 +7,6 @@ from PyQt5.QtMultimedia import QSoundEffect
 from collections import defaultdict
 import pandas as pd
 
-# Load word list
-pan_stimuli_df = pd.read_csv("pan_stimuli.csv")
-pan_stimuli = pan_stimuli_df.iloc[:, 0].tolist()
 
 def build_trial_blocks(word_list, block_size=5):
     trials = []
@@ -23,6 +20,7 @@ def build_trial_blocks(word_list, block_size=5):
         for word in block_words:
             trials.append((speaker, word))
     return trials
+
 
 class TileGame(QWidget):
     def __init__(self):
@@ -44,27 +42,26 @@ class TileGame(QWidget):
                   "wrong_msg": "The wrong spelling was added to the dictionary."}
         }
 
-        self.word_list = pan_stimuli.copy()
+        # Load both valid Shahmukhi words and the corresponding audio map
+        self.word_list, self.map_sh_to_audio = self.load_audio_mappings()
         random.shuffle(self.word_list)
+
         self.trials = build_trial_blocks(self.word_list)
         self.total_trials = len(self.trials)
-        self.trial_counter = 0
-        self.points = 0
-        self.character_points = {
-            "A": self.scenarios["A"]["starting_points"],
-            "B": self.scenarios["B"]["starting_points"]
-        }
-        self.max_points_per_trial = 50
-        self.tile_buttons = []
-        self.correct_answer_order = []
 
-        self.sound = QSoundEffect()
-        self.map_sh_to_audio = self.load_audio_mappings()
-
+        # ✅ Initialize all game state attributes
         self.audio_played = False
         self.replay_used = False
+        self.trial_counter = 0
+        self.points = 0
+        self.correct_answer_order = []
+        self.character_points = {"A": 0, "B": 0}
+        self.max_points_per_trial = 50
+        self.tile_buttons = []
+        self.sound = QSoundEffect()
 
         self.setup_ui()
+
 
     def load_audio_mappings(self):
         change_sh_to_ipa = {}
@@ -91,15 +88,18 @@ class TileGame(QWidget):
                 full_path = os.path.join(ak_audio_directory, file_name)
                 match_ipa_to_file[ipa_word].append((full_path, "AK1"))
 
-        # Only include words that have BOTH versions
         map_sh_to_audio = {}
+        valid_words = []
+
         for sh_word, ipa in change_sh_to_ipa.items():
             paths = match_ipa_to_file.get(ipa, [])
-            has_ato = any(src == "ATO" for (_, src) in paths)
-            has_ak1 = any(src == "AK1" for (_, src) in paths)
-            if has_ato and has_ak1:
-                map_sh_to_audio[sh_word] = {src: path for (path, src) in paths}
-        return map_sh_to_audio
+            sources = {src: path for path, src in paths}
+            if "AK1" in sources and "ATO" in sources:
+                map_sh_to_audio[sh_word] = sources
+                valid_words.append(sh_word)
+
+        return valid_words, map_sh_to_audio
+
 
 
     def scale_w(self, x_ratio): return int(self.screen_width * x_ratio)
@@ -354,7 +354,7 @@ class TileGame(QWidget):
 
     def create_tiles(self):
         self.clear_existing_tiles()
-        distractors = random.sample([w for w in pan_stimuli if w != self.target_word], 15)
+        distractors = random.sample([w for w in self.word_list if w != self.target_word], 15)
         self.tile_words = distractors + [self.target_word]
         random.shuffle(self.tile_words)
 
