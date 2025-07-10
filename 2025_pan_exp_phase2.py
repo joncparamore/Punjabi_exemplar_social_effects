@@ -92,7 +92,7 @@ class TileGame(QWidget):
     def load_audio_mappings(self):
 
         # Load Shahmukhi–IPA mapping from CSV
-        df = pd.read_csv("tokens_shahmukhi_ipa.csv")
+        df = pd.read_csv("tokens_shahmukhi_ipa.csv", encoding="utf-8")
         df.columns = [col.strip() for col in df.columns]
         shahmukhi_col = df.columns[0]
         ipa_col = "IPA"
@@ -479,7 +479,7 @@ class TileGame(QWidget):
     # CSV output
     def save_csv_output(self):
         filename = f"phase2_correct_order_{self.user_id}.csv"
-        with open(filename, "w", newline='') as file:
+        with open(filename, "w", newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             for word in self.correct_answer_order:
                 writer.writerow([word])
