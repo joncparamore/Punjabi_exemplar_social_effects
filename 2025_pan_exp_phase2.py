@@ -202,7 +202,7 @@ class TileGame(QWidget):
 
         self.points_label = QLabel("", self)
         self.points_label.setFont(QFont("Verdana", self.scale_w(0.025)))
-        self.points_label.resize(700, 80)
+        self.points_label.resize(700, 40)
         self.points_label.move((self.screen_width - 500) // 2, self.scale_h(0.18))
 
         self.timer = QTimer()
