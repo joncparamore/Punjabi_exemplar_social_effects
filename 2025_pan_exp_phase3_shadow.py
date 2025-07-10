@@ -162,7 +162,14 @@ phase3_word_order_list = []
 #---------------Create Window---------------#
 
 
-window = QWidget()
+class MainWindow(QWidget):
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
+window = MainWindow()
+
+#window = QWidget()
 #main_layout = QVBoxLayout(window)
 
 
