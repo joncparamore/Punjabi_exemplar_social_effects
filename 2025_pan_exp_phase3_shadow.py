@@ -165,7 +165,7 @@ phase3_word_order_list = []
 class MainWindow(QWidget):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
-            self.showNormal()
+            self.showMaximized()
 
 window = MainWindow()
 
