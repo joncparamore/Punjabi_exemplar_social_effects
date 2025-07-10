@@ -578,7 +578,7 @@ def show_feedback():
       point_countdown.setText("-30  pts")
       point_popup.setText("-30  Out of Time")
       point_popup.setStyleSheet("color: FireBrick")
-      point_popup.setFont(QFont("Verdana", 35))
+      point_popup.setFont(QFont("Verdana", 30))
       point_popup.adjustSize()
       audio_word_list.append(audio_word_list[word_num])          #To ensure every word is recorded, participant must redo the word at the end of the list
       total_points.setText("Total Points: " + str(points))         #Update the Total Points in the top right corner
@@ -590,14 +590,14 @@ def show_feedback():
       point_popup.setText("-30   Alert: Please Speak Clearly")
       point_popup.setWordWrap(True)
       point_popup.setStyleSheet("color: FireBrick")
-      point_popup.setFont(QFont("Verdana", 35))
+      point_popup.setFont(QFont("Verdana", 30))
       point_popup.adjustSize()
       total_points.setText("Total Points: " + str(points))
       total_points.adjustSize()
       QTimer.singleShot(3000, next_button.show)
    else:
        points += word_points_left
-       point_popup.setFont(QFont("Verdana", 40))
+       point_popup.setFont(QFont("Verdana", 35))
        point_popup.setText("+" + f"{word_points_left}")
        point_popup.adjustSize()
        if  word_points_left>30:
