@@ -60,12 +60,12 @@ phase1_word_order_list = []
 
 #---------------Create Window---------------#
 
-class BaselineWindow(QWidget):
+class MainWindow(QWidget):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.showMaximized()
 
-window = BaselineWindow()
+window = MainWindow()
 
 #main_layout = QVBoxLayout(window)
 
@@ -77,7 +77,7 @@ layout = QVBoxLayout() #automatically stacks and centers items in the center of 
 layout.setAlignment(Qt.AlignCenter) 
 
 
-window.setWindowTitle("Baseline Window")
+window.setWindowTitle("Phase 1 Window")
 window.setLayout(layout)
 window.showFullScreen()
 
@@ -237,7 +237,7 @@ layout.addWidget(point_popup, alignment=Qt.AlignCenter)
 #---------------Create main text label---------------#
 
 
-current_word = QLabel("Phase 1: Baseline Reading", window)
+current_word = QLabel("Phase 1: Read Aloud", window)
 current_word.setFont(QFont("Verdana", 50))
 current_word.setAlignment(Qt.AlignCenter)
 current_word.setContentsMargins(40, 0, 40, 0)  # 40px side padding
