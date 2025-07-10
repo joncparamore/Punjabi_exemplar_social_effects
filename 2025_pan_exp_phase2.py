@@ -155,7 +155,7 @@ class TileGame(QWidget):
         self.instructions.setFont(QFont("Verdana", self.scale_h(0.016)))
         self.instructions.setWordWrap(True)
         self.instructions.setFixedWidth(self.scale_w(0.5))
-        self.instructions.move((self.screen_width - self.instructions.width()) // 2, self.scale_h(0.55))
+        self.instructions.move((self.screen_width - self.instructions.width()) // 2, self.scale_h(0.70))
         self.instructions.hide()
 
         self.next_button = QPushButton("Start", self)
@@ -166,7 +166,7 @@ class TileGame(QWidget):
         self.next_button.clicked.connect(self.start_first_instruction)
 
         self.play_word_button = QPushButton("Play Word", self)
-        self.play_word_button.setFont(QFont("Verdana", self.scale_w(0.018)))
+        self.play_word_button.setFont(QFont("Verdana", self.scale_w(0.012)))
         self.play_word_button.resize(self.scale_w(0.15), self.scale_h(0.07))
         self.play_word_button.move((self.screen_width - self.play_word_button.width()) // 2, self.scale_h(0.70))
         self.play_word_button.setStyleSheet("background-color: lightblue; border-radius: 10px;")
