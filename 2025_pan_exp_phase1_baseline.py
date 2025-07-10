@@ -63,7 +63,7 @@ phase1_word_order_list = []
 class BaselineWindow(QWidget):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
-            self.showNormal()
+            self.showMaximized()
 
 window = BaselineWindow()
 
