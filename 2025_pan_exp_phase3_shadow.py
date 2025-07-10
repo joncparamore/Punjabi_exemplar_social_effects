@@ -19,7 +19,6 @@ from PyQt5.QtCore import QUrl, QTimer, Qt
 from PyQt5.QtGui import QFont, QPixmap, QColor
 
 
-
 import pandas as pd
 import random
 
@@ -28,14 +27,14 @@ import random
 ato_audio_directory = "2025_pan_AT0"
 ak_audio_directory= "2025_pan_AK1"
 
-CSV_FILE = "tokens_shahmukhi_ipa.csv"
+dictionary_csv_file = "tokens_shahmukhi_ipa.csv"
 
 
 #pan_stimuli_df = pd.read_csv("pan_stimuli.csv")  # Read the CSV into a DataFrame
 ##pan_stimuli = pan_stimuli_df.iloc[:, 0].tolist()
 
-eng_stimuli_df = pd.read_csv("eng_test_words.csv")  # Read the CSV into a DataFrame
-eng_stimuli = eng_stimuli_df.iloc[:, 0].tolist()
+#eng_stimuli_df = pd.read_csv("eng_test_words.csv")  # Read the CSV into a DataFrame
+#eng_stimuli = eng_stimuli_df.iloc[:, 0].tolist()
 
 app = QApplication([])
 
@@ -44,68 +43,54 @@ class EscapeWindow(QWidget):
         if event.key() == Qt.Key_Escape:
             self.showNormal()  # Exit fullscreen
 
-#----------MAPPING TO THE AUIO FILES------------#
 
-# Convert all the Shahmukhi words to IPA that way they can be matched to their IPA audio files
-change_sh_to_ipa = {}        #Create a new dictionary to store these matches
+#-----------GET AUDIO FILES-----------#
 
-with open(CSV_FILE, encoding="utf-8") as f:
-    reader = csv.DictReader(f)               #read the dictionary
+from collections import defaultdict
+
+dictionary_csv_file = "tokens_shahmukhi_ipa.csv"
+
+
+# Map the IPA words to Shahmukhi
+
+ipa_to_shahmukhi = {}
+with open(dictionary_csv_file, encoding="utf-8") as f:
+    reader = csv.DictReader(f)
     for row in reader:
-        shahmukhi_word = row[list(reader.fieldnames)[0]].strip()  # Get Shahmukhi word from the first column. Use .strip to remove extra space
-        ipa_word = row["IPA"].strip()       #Get corresponding IPA word from the row
-        change_sh_to_ipa[shahmukhi_word] = ipa_word  #changes the Shahmukhi word to the IPA word in the dictionary
+        ipa = row["IPA"].strip()    #Get the IPA column, use .strip to remove extra characters/spaces
+        shahmukhi = row[list(reader.fieldnames)[0]].strip()     #Get the corresponding Shahnukhi
+        ipa_to_shahmukhi[ipa] = shahmukhi
 
-# Match the IPA words to the correct .wav files 
+# Get audio files from both directories and map them back to Shahmukhi
+def load_audio_files(directory, source_label):
+    audio_entries = []
+    for file_name in os.listdir(directory):
+        if file_name.endswith(".wav"):              #Go through each folder and get all the audio files
+            ipa_audio_name = file_name.split("_")[-1].replace(".wav", "").strip()           #Extract the IPA word from the file
+            if ipa_audio_name in ipa_to_shahmukhi:
+                shahmukhi = ipa_to_shahmukhi[ipa_audio_name]
+                full_path = os.path.join(directory, file_name)
+                audio_entries.append((shahmukhi, full_path, source_label))
+            else:
+                print(f"IPA '{ipa_audio_name}' not found in CSV.")
+    return audio_entries
 
-from collections import defaultdict         #Creates a default dictionary with open space that way it's easier to append things to
-
-
-match_ipa_to_file = defaultdict(list)
-
-for file_name in os.listdir(ato_audio_directory):
-    if file_name.endswith(".wav"):
-        ipa_word = file_name.split("_")[-1].replace(".wav", "").strip()
-        full_path = os.path.join(ato_audio_directory, file_name)
-        match_ipa_to_file[ipa_word].append((full_path, "ATO"))
-
-for file_name in os.listdir(ak_audio_directory):
-    if file_name.endswith(".wav"):
-        ipa_word = file_name.split("_")[-1].replace(".wav", "").strip()
-        full_path = os.path.join(ak_audio_directory, file_name)
-        match_ipa_to_file[ipa_word].append((full_path, "AK1"))
-
-
-# Map each Shahmukhi word to its audio file 
-
-map_sh_to_audio = {}
-for shahmukhi_word, ipa_word in change_sh_to_ipa.items():
-    paths = match_ipa_to_file.get(ipa_word, [])
-    if paths:
-        map_sh_to_audio[shahmukhi_word] = paths
-    else:
-        print(f"No audio for IPA '{ipa_word}' (Shahmukhi '{shahmukhi_word}')")
-
-all_words = list(map_sh_to_audio.keys())
-random.shuffle(all_words)
+# Load audio from each directory
+ak1_words = load_audio_files(ak_audio_directory, "AK1")
+ato_words = load_audio_files(ato_audio_directory, "ATO")
 
 
-#Basically take the words and split each list in half so that there are 4 sections that alternate between speakers
+random.shuffle(ato_words)
+random.shuffle(ak1_words)
 
-half = len(all_words) // 2
-first_half = all_words[:half]
-second_half = all_words[half:]
+block1 = ato_words[:12]
+block2 = ak1_words[:12]
+block3 = ato_words[12:]  # Remaining 13 words in second block
+block4 = ak1_words[12:]  # Remaining 13
 
-#split into ATO/AK1 versions
-block1 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "ATO")) for word in first_half]
-block2 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "AK1")) for word in first_half]
-block3 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "ATO")) for word in second_half]
-block4 = [(word, next(audio for audio in map_sh_to_audio[word] if audio[1] == "AK1")) for word in second_half]
-
-# Final full list of words to present. The program rotates so that each word is displayed 4 times
-
-
+#Build Audio Word List with the section headers
 audio_word_list = []
+
 audio_word_list += [("Section 1", "ATO")] + block1
 audio_word_list += [("Section 2", "AK1")] + block2
 audio_word_list += [("Section 3", "ATO")] + block3
@@ -121,14 +106,7 @@ audio_word_list += [("Section 8", "AK1")] + block4
 audio_word_list += [("Section 9", "ATO")] + block1
 audio_word_list += [("Section 10", "AK1")] + block2
 audio_word_list += [("Section 11", "ATO")] + block3
-audio_word_list += [("Section 12","AK1")] + block4
-
-
-audio_word_list += [("Section 13", "ATO")] + block1
-audio_word_list += [("Section 14", "AK1")] + block2
-audio_word_list += [("Section 15", "ATO")] + block3
-audio_word_list += [("Section 16", "AK1")] + block4
-
+audio_word_list += [("Section 12", "AK1")] + block4
 
 
 sound = QSoundEffect()
@@ -242,7 +220,7 @@ total_points.setStyleSheet("color:DarkSlateGray")
 total_points.adjustSize()
 total_points.hide()
 total_points_top_bar = QHBoxLayout()
-total_points_top_bar.setContentsMargins(0, 30, 30, 0)  # top, right padding
+total_points_top_bar.setContentsMargins(0, 60, 155, 0)  # top, right padding
 layout.addLayout(total_points_top_bar)
 layout.setAlignment(Qt.AlignTop)
 
@@ -254,7 +232,7 @@ total_points_top_bar.addWidget(total_points)
 
 point_countdown = QLabel("", window)    #Point countdown box that constantly decreases next to the clock
 point_countdown.setAlignment(Qt.AlignCenter)
-point_countdown.setFixedSize(135, 66)
+point_countdown.setFixedSize(200, 80)
 point_countdown.setFont(QFont("Verdana", 22))
 point_countdown.setStyleSheet("background-color: lightgrey; padding: 20px; border: 2 px; border-radius: 5px")
 point_countdown.hide()
@@ -271,7 +249,7 @@ clock = QLabel("", window)
 clock.setAlignment(Qt.AlignCenter)
 clock.setFont(QFont("Verdana", 22))
 clock.setStyleSheet("background-color: lightgrey; border: 2 px; padding: 20px; border-radius: 5px")
-clock.setFixedSize(135, 66)
+point_countdown.setFixedSize(200, 80)
 clock.hide()
 
 
@@ -317,7 +295,7 @@ layout.addWidget(clock_point_container, alignment=Qt.AlignCenter)               
 
 
 point_popup = QLabel("", window)    #Point popup text that appears after clicking "next"
-point_popup.setFixedSize(600, 80)
+point_popup.setFixedSize(2000, 80)
 point_popup.setAlignment(Qt.AlignCenter)
 
 layout.addSpacerItem(QSpacerItem(0, 60, QSizePolicy.Minimum, QSizePolicy.Preferred))   #Space from Clock/Point countdown to the point_popup
@@ -344,7 +322,7 @@ layout.addSpacerItem(QSpacerItem(0, 200, QSizePolicy.Minimum, QSizePolicy.Prefer
 
 
 current_word = QLabel("Phase 3: Shadow Reading", window)
-current_word.setFont(QFont("Verdana", 50))
+current_word.setFont(QFont("Verdana", 80))
 current_word.adjustSize()
 current_word.setAlignment(Qt.AlignCenter)
 current_word.setContentsMargins(40, 0, 40, 0)  # 40px side padding
@@ -579,9 +557,9 @@ def next_word():
         clock.setText("3.0   sec")                    #Reset the clock, begin the clock on the subsequent line
         point_countdown.setText("90  pts")
         current_word.setText(audio_word_list[word_num][0])        #Do we want to show the word on the screen too?
-        current_word.setFont(QFont("Verdana", 40))
+        current_word.setFont(QFont("Jameel Noori Nastaleeq", 40))
         phase3_word_order_list.append(audio_word_list[word_num])     #output word order into csv for later analysis
-        word, (path, source) = audio_word_list[word_num]
+        word, path, source = audio_word_list[word_num]
         phase3_word_order_list.append(word)
 
         sound.setSource(QUrl.fromLocalFile(path))
