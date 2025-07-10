@@ -392,7 +392,7 @@ point_popup.setFixedSize(2000, 80)
 point_popup.setAlignment(Qt.AlignCenter)
 
 
-layout.addSpacerItem(QSpacerItem(0, 60, QSizePolicy.Minimum, QSizePolicy.Preferred))   #Space from Clock/Point countdown to the point_popup
+layout.addSpacerItem(QSpacerItem(0, 80, QSizePolicy.Minimum, QSizePolicy.Preferred))   #Space from Clock/Point countdown to the point_popup
 layout.addWidget(point_popup, alignment=Qt.AlignCenter)
 layout.addSpacerItem(QSpacerItem(0, 80, QSizePolicy.Minimum, QSizePolicy.Preferred))
 
@@ -426,8 +426,8 @@ layout.addSpacerItem(QSpacerItem(0, 200, QSizePolicy.Minimum, QSizePolicy.Prefer
 
 
 
-current_word = QLabel("Phase 3: Shadow Reading", window)
-current_word.setFont(QFont("Verdana", 50))
+current_word = QLabel("Phase 3: Listen and Respond", window)
+current_word.setFont(QFont("Verdana", 45))
 current_word.adjustSize()
 current_word.setAlignment(Qt.AlignCenter)
 current_word.setContentsMargins(40, 0, 40, 0)  # 40px side padding
@@ -444,8 +444,8 @@ layout.addSpacerItem(QSpacerItem(0, 200, QSizePolicy.Minimum, QSizePolicy.Prefer
 #---------------Create Instructions for the first screen only---------------#
 
 
-instructions = QLabel("This phase will test your language speaking abilities. After hearing each word, acknowledge you have heard it by saying it back as quickly and clearly as possible to earn points. You will have 2 seconds to read each word aloud and click the 'Done' button after you are finished speaking. Click the 'Next' button to move onto the next word", window)
-instructions.setFont(QFont("Verdana", 20))
+instructions = QLabel("This phase will test your language listening and speaking abilities. After hearing each word, acknowledge you have heard it by saying it back as quickly and clearly as possible to earn points. You will have 2 seconds to read each word aloud and click the 'Done' button after you are finished speaking. Click the 'Next' button to move onto the next word", window)
+instructions.setFont(QFont("Verdana", 15))
 instructions.setStyleSheet("line-height: 150%")
 instructions.setWordWrap(True)
 instructions.setFixedSize(800,300)
@@ -652,7 +652,7 @@ def next_word():
 
 
        current_word.setText("All finished!")
-       current_word.setFont(QFont("Verdana", 80))
+       current_word.setFont(QFont("Verdana", 40))
        current_word.adjustSize()
 
 
@@ -710,7 +710,7 @@ def next_word():
        clock.setText("3.0   sec")                    #Reset the clock, begin the clock on the subsequent line
        point_countdown.setText("90  pts")
        current_word.setText(audio_word_list[word_num][0])        #Do we want to show the word on the screen too?
-       current_word.setFont(QFont("Jameel Noori Nastaleeq", 40))
+       current_word.setFont(QFont("Jameel Noori Nastaleeq", 45))
        phase3_word_order_list.append(audio_word_list[word_num])     #output word order into csv for later analysis
        word, path, source = audio_word_list[word_num]
        phase3_word_order_list.append(word)
