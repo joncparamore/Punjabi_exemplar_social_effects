@@ -523,7 +523,7 @@ class TileGame(QWidget):
             self.disable_tiles()
             msg = self.scenarios[self.current_speaker]["timeout_msg"]
             self.points_label.setText(f" {msg} (0 pts)")
-            QTimer.singleShot(1500, self.show_block_instruction)
+            QTimer.singleShot(3000, self.show_block_instruction)
 
     def check_tile_click(self, selected_word, tile_button):
         self.timer.stop()
@@ -535,7 +535,7 @@ class TileGame(QWidget):
             self.character_points[self.current_speaker] += pts_left
             tile_button.setStyleSheet("background-color: green; color: white; border-radius: 12px;")
             self.points_label.setText(f"✅ Correct: +{pts_left} pts")
-            QTimer.singleShot(1500, self.show_block_instruction)
+            QTimer.singleShot(3000, self.show_block_instruction)
         else:
             self.points -= 50
             self.character_points[self.current_speaker] -= 50
@@ -550,7 +550,7 @@ class TileGame(QWidget):
                     if btn.text() == self.target_word:
                         btn.setStyleSheet("background-color: green; color: white; border-radius: 12px;")
                         break
-                QTimer.singleShot(1000, self.show_block_instruction)
+                QTimer.singleShot(3000, self.show_block_instruction)
 
             QTimer.singleShot(1000, highlight_correct_tile)
 
