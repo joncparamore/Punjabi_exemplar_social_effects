@@ -251,7 +251,7 @@ layout.addWidget(current_word)
 
 #---------------Create Instructions for the first screen only---------------#
 
-instructions = QLabel("This phase will test your language speaking abilities. You will see a series of words on the screen. Read each word aloud as quickly and clearly as possible to earn points. You will have 2 seconds to read each word aloud and click the 'Done' button after you are finished speaking. Click the 'Next' button to move onto the next word", window)
+instructions = QLabel("The following game will test your fluency in Punjabi. You will see a series of Punjabi words on the screen. Read each word aloud as quickly and clearly as possible to earn points. You will have 2 seconds to read each word aloud and click the 'Done' button after you are finished speaking. Click the 'Next' button to move onto the next word", window)
 instructions.setFont(QFont("Verdana", 20))
 instructions.setStyleSheet("line-height: 150%") 
 instructions.setWordWrap(True)
