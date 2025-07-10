@@ -137,10 +137,6 @@ class TileGame(QWidget):
 
 
 
-
-
-
-
     def scale_w(self, x_ratio): return int(self.screen_width * x_ratio)
     def scale_h(self, y_ratio): return int(self.screen_height * y_ratio)
 
@@ -155,7 +151,7 @@ class TileGame(QWidget):
         self.instructions.setFont(QFont("Verdana", self.scale_h(0.016)))
         self.instructions.setWordWrap(True)
         self.instructions.setFixedWidth(self.scale_w(0.5))
-        self.instructions.move((self.screen_width - self.instructions.width()) // 2, self.scale_h(0.70))
+        self.instructions.move(0, 0)  # Temporary position; will be repositioned later
         self.instructions.hide()
 
         self.next_button = QPushButton("Start", self)
@@ -291,6 +287,12 @@ class TileGame(QWidget):
             text = ("You will hear a series of spoken words. After each word, click the matching word tile "
                     f"to help {self.scenarios[self.current_speaker]['name']} complete their goal.")
             self.instructions.setText(text)
+            # position instructions based on character
+            y_pos = 0.70 if self.current_speaker == "B" else 0.60
+            self.instructions.move(
+                (self.screen_width - self.instructions.width()) // 2,
+                self.scale_h(y_pos)
+                )
             self.instructions.adjustSize()
             self.instructions.show()
 
