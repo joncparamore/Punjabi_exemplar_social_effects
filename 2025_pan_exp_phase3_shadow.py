@@ -147,7 +147,7 @@ layout = QVBoxLayout() #automatically stacks and centers items in the center of 
 layout.setAlignment(Qt.AlignCenter) 
 
 
-window.setWindowTitle("Baseline Window")
+window.setWindowTitle("Phase 3 Window")
 window.setLayout(layout)
 window.showFullScreen()
 
