@@ -565,7 +565,7 @@ class TileGame(QWidget):
     # Exit shortcut
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
-            self.showNormal()
+            self.showMaximized()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
