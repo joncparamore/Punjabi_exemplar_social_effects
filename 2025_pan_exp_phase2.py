@@ -201,7 +201,7 @@ class TileGame(QWidget):
         self.point_countdown.hide()
 
         self.points_label = QLabel("", self)
-        self.points_label.setFont(QFont("Verdana", self.scale_h(0.018)))
+        self.points_label.setFont(QFont("Verdana", self.scale_h(0.025)))
         self.points_label.resize(700, 40)
         self.points_label.move((self.screen_width - 500) // 2, self.scale_h(0.18))
 
@@ -360,20 +360,20 @@ class TileGame(QWidget):
     # audio playback logic
     def handle_play_word(self):
         _, self.target_word = self.trials[self.trial_counter]
-        print(f"\n Target word: {self.target_word}")
+        #print(f"\n Target word: {self.target_word}")
 
         audio_entry = self.map_sh_to_audio.get(self.target_word, {})
-        print(f" Audio entry found: {audio_entry}")
+        #print(f" Audio entry found: {audio_entry}")
 
         source = "AK1" if self.current_speaker == "A" else "ATO"
-        print(f" Speaker source: {source}")
+        #print(f" Speaker source: {source}")
 
         audio_path = audio_entry.get(source, None)
-        print(f" Audio path: {audio_path}")
+        #print(f" Audio path: {audio_path}")
 
-        if not audio_path:
-            print(" ERROR: No audio path found for this word.")
-            return
+        #if not audio_path:
+            #print(" ERROR: No audio path found for this word.")
+            #return
 
         # Check if file actually exists
         #if not os.path.exists(audio_path):
