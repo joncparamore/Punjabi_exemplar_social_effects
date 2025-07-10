@@ -201,7 +201,7 @@ class TileGame(QWidget):
         self.point_countdown.hide()
 
         self.points_label = QLabel("", self)
-        self.points_label.setFont(QFont("Verdana", self.scale_h(0.014)))
+        self.points_label.setFont(QFont("Verdana", self.scale_h(0.018)))
         self.points_label.resize(700, 40)
         self.points_label.move((self.screen_width - 500) // 2, self.scale_h(0.18))
 
@@ -383,7 +383,7 @@ class TileGame(QWidget):
             #print(" Audio file exists.")
 
         self.sound.setSource(QUrl.fromLocalFile(audio_path))
-        #print(f" Sound status after setSource: {self.sound.status()}")  # Should be 2 for Ready
+        #print(f" Sound status after setSource: {self.sound.status()}")  
 
         self.sound.play()
 
