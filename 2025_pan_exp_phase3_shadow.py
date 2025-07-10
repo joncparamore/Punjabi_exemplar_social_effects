@@ -41,7 +41,7 @@ app = QApplication([])
 class EscapeWindow(QWidget):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
-            self.showMaximizedl()  # Exit fullscreen
+            self.showMaximized()  # Exit fullscreen
 
 
 
