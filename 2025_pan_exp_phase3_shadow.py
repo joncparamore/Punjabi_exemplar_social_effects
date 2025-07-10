@@ -138,7 +138,7 @@ phase3_word_order_list = []
 #window = QWidget()
 window = EscapeWindow()
 window.setFocusPolicy(Qt.StrongFocus)
-main_layout = QVBoxLayout(window)
+#main_layout = QVBoxLayout(window)
 
 
 
