@@ -41,7 +41,8 @@ app = QApplication([])
 class EscapeWindow(QWidget):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
-            self.showMaximized()  # Exit fullscreen
+            self.showNormal()  # Exit fullscreen
+
 
 
 #-----------GET AUDIO FILES-----------#
@@ -137,7 +138,7 @@ phase3_word_order_list = []
 #window = QWidget()
 window = EscapeWindow()
 window.setFocusPolicy(Qt.StrongFocus)
-#main_layout = QVBoxLayout(window)
+main_layout = QVBoxLayout(window)
 
 
 
@@ -147,9 +148,11 @@ layout = QVBoxLayout() #automatically stacks and centers items in the center of 
 layout.setAlignment(Qt.AlignCenter) 
 
 
-window.setWindowTitle("Phase 3 Window")
+window.setWindowTitle("Baseline Window")
 window.setLayout(layout)
 window.showFullScreen()
+
+
 
 
 
@@ -220,7 +223,7 @@ total_points.setStyleSheet("color:DarkSlateGray")
 total_points.adjustSize()
 total_points.hide()
 total_points_top_bar = QHBoxLayout()
-total_points_top_bar.setContentsMargins(0, 60, 155, 0)  # top, right padding
+#total_points_top_bar.setContentsMargins(0, 60, 155, 0)  # top, right padding
 layout.addLayout(total_points_top_bar)
 layout.setAlignment(Qt.AlignTop)
 
@@ -578,7 +581,7 @@ def next_word():
 
         def on_audio_finished():        #Only start clock and point countdown after the sound plays
             if not sound.isPlaying():
-                done_button.setFont(QFont("Verdana", 22))
+                done_button.setFont(QFont("Verdana", 22))``
                 done_button.setStyleSheet("background-color: lightblue; padding: 20px; border: 2 px; border-radius: 5px")        #Reset Done button
                 done_button.show()
                 timer.start()
