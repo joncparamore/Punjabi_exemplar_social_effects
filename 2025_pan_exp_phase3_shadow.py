@@ -212,7 +212,7 @@ id_label.setAlignment(Qt.AlignCenter)
 
 id_input = QLineEdit(window)
 id_input.setFont(QFont("Verdana", 20))
-id_input.setFixedWidth(800)
+id_input.setFixedWidth(400)
 id_input.setPlaceholderText("e.g., jsmith123")
 id_input.setAlignment(Qt.AlignCenter)
 
@@ -686,6 +686,7 @@ def next_word():
        current_word.setFont(QFont("Verdana", 18))
        current_word.setWordWrap(True)
        current_word.setFixedWidth(800)
+       current_word.adjustSize()
        if "AK1" in audio_word_list[word_num][1]:
            pixmap = QPixmap("laborer.jpg").scaled(300, 300, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
