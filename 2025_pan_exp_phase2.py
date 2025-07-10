@@ -288,7 +288,7 @@ class TileGame(QWidget):
                     f"to help {self.scenarios[self.current_speaker]['name']} complete their goal.")
             self.instructions.setText(text)
             # position instructions based on character
-            y_pos = 0.70 if self.current_speaker == "B" else 0.60
+            y_pos = 0.65 if self.current_speaker == "B" else 0.55
             self.instructions.move(
                 (self.screen_width - self.instructions.width()) // 2,
                 self.scale_h(y_pos)
