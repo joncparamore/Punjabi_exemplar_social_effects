@@ -147,19 +147,19 @@ class TileGame(QWidget):
     # UI formatting
     def setup_ui(self):
         self.phase2_title = QLabel("Phase 2: Listening", self)
-        self.phase2_title.setFont(QFont("Verdana", self.scale_w(0.05)))
+        self.phase2_title.setFont(QFont("Verdana", self.scale_h(0.05)))
         self.phase2_title.adjustSize()
         self.phase2_title.move((self.screen_width - self.phase2_title.width()) // 2, self.scale_h(0.4))
 
         self.instructions = QLabel("", self)
-        self.instructions.setFont(QFont("Verdana", self.scale_w(0.016)))
+        self.instructions.setFont(QFont("Verdana", self.scale_h(0.016)))
         self.instructions.setWordWrap(True)
         self.instructions.setFixedWidth(self.scale_w(0.5))
         self.instructions.move((self.screen_width - self.instructions.width()) // 2, self.scale_h(0.55))
         self.instructions.hide()
 
         self.next_button = QPushButton("Start", self)
-        self.next_button.setFont(QFont("Verdana", self.scale_w(0.018)))
+        self.next_button.setFont(QFont("Verdana", self.scale_h(0.018)))
         self.next_button.resize(self.scale_w(0.15), self.scale_h(0.07))
         self.next_button.move((self.screen_width - self.next_button.width()) // 2, self.scale_h(0.70))
         self.next_button.setStyleSheet("background-color: lightgray; border-radius: 10px;")
@@ -174,7 +174,7 @@ class TileGame(QWidget):
         self.play_word_button.hide()
 
         self.char_points_label = QLabel(self)
-        self.char_points_label.setFont(QFont("Verdana", self.scale_w(0.014)))
+        self.char_points_label.setFont(QFont("Verdana", self.scale_h(0.014)))
         self.char_points_label.move(self.scale_w(0.02), self.scale_h(0.06))
         self.char_points_label.resize(self.scale_w(0.2), 30)
         self.char_points_label.hide()
@@ -185,27 +185,27 @@ class TileGame(QWidget):
         self.char_icon.hide()
 
         self.total_points_label = QLabel(f"Total Points: {self.points}", self)
-        self.total_points_label.setFont(QFont("Verdana", self.scale_w(0.016)))
+        self.total_points_label.setFont(QFont("Verdana", self.scale_h(0.016)))
         self.total_points_label.move(self.screen_width - self.scale_w(0.22), self.scale_h(0.06))
         self.total_points_label.resize(self.scale_w(0.2), 30)
         self.total_points_label.hide()
 
         self.clock = QLabel("", self)
-        self.clock.setFont(QFont("Verdana", self.scale_w(0.014)))
+        self.clock.setFont(QFont("Verdana", self.scale_h(0.014)))
         self.clock.setStyleSheet("background-color: lightgrey; border: 2px solid gray; padding: 8px; border-radius: 5px;")
         self.clock.resize(self.scale_w(0.08), self.scale_h(0.05))
         self.clock.move(self.screen_width - self.scale_w(0.22), self.scale_h(0.13))
         self.clock.hide()
 
         self.point_countdown = QLabel("", self)
-        self.point_countdown.setFont(QFont("Verdana", self.scale_w(0.014)))
+        self.point_countdown.setFont(QFont("Verdana", self.scale_h(0.014)))
         self.point_countdown.setStyleSheet("background-color: lightgrey; border: 2px solid gray; padding: 8px; border-radius: 5px;")
         self.point_countdown.resize(self.scale_w(0.08), self.scale_h(0.05))
         self.point_countdown.move(self.screen_width - self.scale_w(0.22), self.scale_h(0.20))
         self.point_countdown.hide()
 
         self.points_label = QLabel("", self)
-        self.points_label.setFont(QFont("Verdana", self.scale_w(0.012)))
+        self.points_label.setFont(QFont("Verdana", self.scale_h(0.014)))
         self.points_label.resize(700, 40)
         self.points_label.move((self.screen_width - 500) // 2, self.scale_h(0.18))
 
@@ -222,18 +222,18 @@ class TileGame(QWidget):
         id_layout.setAlignment(Qt.AlignCenter)
 
         self.id_label = QLabel("Please enter your Name or ID to begin:", self)
-        self.id_label.setFont(QFont("Verdana", self.scale_w(0.025)))
+        self.id_label.setFont(QFont("Verdana", self.scale_h(0.025)))
         self.id_label.setAlignment(Qt.AlignCenter)
 
         self.id_input = QLineEdit(self)
-        self.id_input.setFont(QFont("Verdana", self.scale_w(0.02)))
+        self.id_input.setFont(QFont("Verdana", self.scale_h(0.02)))
         self.id_input.setFixedWidth(self.scale_w(0.4))
         self.id_input.setPlaceholderText("e.g., jsmith123")
         self.id_input.setAlignment(Qt.AlignCenter)
 
         self.continue_button = QPushButton("Continue", self)
-        self.continue_button.setFont(QFont("Verdana", self.scale_w(0.02)))
-        self.continue_button.setFixedSize(self.scale_w(0.15), self.scale_h(0.08))
+        self.continue_button.setFont(QFont("Verdana", self.scale_h(0.02)))
+        self.continue_button.setFixedSize(self.scale_w(0.12), self.scale_h(0.06))
         self.continue_button.setStyleSheet("background-color: lightgreen;")
         self.continue_button.clicked.connect(self.collect_user_id)
 
@@ -417,7 +417,7 @@ class TileGame(QWidget):
             self.total_points_label.hide()
 
             self.final_message = QLabel("All finished!", self)
-            self.final_message.setFont(QFont("Verdana", self.scale_w(0.025)))
+            self.final_message.setFont(QFont("Verdana", self.scale_h(0.025)))
             self.final_message.adjustSize()
             self.final_message.move((self.screen_width - self.final_message.width()) // 2, 80)
             self.final_message.show()
