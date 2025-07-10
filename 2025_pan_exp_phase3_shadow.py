@@ -186,7 +186,7 @@ layout.setAlignment(Qt.AlignCenter)
 
 
 
-window.setWindowTitle("Baseline Window")
+window.setWindowTitle("Phase 3 Window")
 window.setLayout(layout)
 window.showFullScreen()
 
