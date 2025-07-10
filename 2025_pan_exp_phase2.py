@@ -170,7 +170,7 @@ class TileGame(QWidget):
         self.play_word_button.hide()
 
         self.char_points_label = QLabel(self)
-        self.char_points_label.setFont(QFont("Verdana", self.scale_h(0.014)))
+        self.char_points_label.setFont(QFont("Verdana", self.scale_h(0.016)))
         self.char_points_label.move(self.scale_w(0.02), self.scale_h(0.06))
         self.char_points_label.resize(self.scale_w(0.2), 30)
         self.char_points_label.hide()
@@ -521,6 +521,14 @@ class TileGame(QWidget):
         if self.elapsed_deciseconds >= 50:
             self.timer.stop()
             self.disable_tiles()
+            
+            # Grayed-out highlight for correct tile
+            for btn in self.tile_buttons:
+                if btn.text() == self.target_word:
+                    btn.setStyleSheet("background-color: #b5d6b5; color: gray; border-radius: 12px;")
+                else:
+                    btn.setStyleSheet("background-color: lightgray; color: gray; border-radius: 12px;")
+            
             msg = self.scenarios[self.current_speaker]["timeout_msg"]
             self.points_label.setText(f" {msg} (0 pts)")
             QTimer.singleShot(3000, self.show_block_instruction)
