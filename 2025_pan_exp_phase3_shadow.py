@@ -691,13 +691,13 @@ def next_word():
            pixmap = QPixmap("laborer.jpg").scaled(300, 300, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
            image_label.show()
-           current_word.setText(audio_word_list[word_num][0] + " of helping the laborer is about to begin. Remember, after you have heard the laborer speak each word, acknowledge the word by saying it back as quickly and clearly as possible.")
+           current_word.setText(audio_word_list[word_num][0] + " of helping the laborer is about to begin. Remember, after you have heard the laborer speak each word, acknowledge the word by clearly saying it back.")
            current_word.show()
        elif "ATO" in audio_word_list[word_num][1]:
            pixmap = QPixmap("scholar.jpg").scaled(250, 250, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
            image_label.show()
-           current_word.setText(audio_word_list[word_num][0] + " of helping the scholar is about to begin. Remember, after you have heard the scholar speak each word, acknowledge the word by saying it back as quickly and clearly as possible.")
+           current_word.setText(audio_word_list[word_num][0] + " of helping the scholar is about to begin. Remember, after you have heard the scholar speak each word, acknowledge the word by clearly saying it back.")
            current_word.show()
 
 
