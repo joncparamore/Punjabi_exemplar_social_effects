@@ -444,7 +444,7 @@ layout.addSpacerItem(QSpacerItem(0, 200, QSizePolicy.Minimum, QSizePolicy.Prefer
 #---------------Create Instructions for the first screen only---------------#
 
 
-instructions = QLabel("This phase will test your language listening and speaking abilities. Thanks to your work in the previous phase, the laborer has now learned how to read his words, and the scholar has added his words into the dictionary. The scholar and laborer are now going to say each of their words aloud. After hearing each word, acknowledge you have heard it by saying it back as quickly and clearly as possible to earn points. After the audio file plays, you will have 2 seconds to read each word aloud and click the 'Done' button after you are finished speaking. Click the 'Next' button to move onto the next word", window)
+instructions = QLabel("This phase will test your language listening and speaking abilities. Thanks to your work in the previous phase, the laborer has now learned how to read his words and the scholar has added his words into the dictionary. The scholar and laborer are now going to say each of their words aloud, one at a time. After hearing each word, acknowledge you have heard it by saying it back as quickly and clearly as possible to earn points. After the audio file plays, you will have 2 seconds to read each word aloud and click the 'Done' button after you are finished speaking. Click the 'Next' button to move onto the next word", window)
 instructions.setFont(QFont("Verdana", 14))
 instructions.setStyleSheet("line-height: 150%")
 instructions.setWordWrap(True)
@@ -683,18 +683,20 @@ def next_word():
        next_button.hide()
        done_button.hide()
        start_button.show()                     #To move to the next button they click "start" which then runs the same starting function as before to set up for the words
-       current_word.setFont(QFont("Verdana", 30))
+       current_word.setFont(QFont("Verdana", 18))
+       current_word.setWordWrap(True)
+       current_word.setFixedWidth(800)
        if "AK1" in audio_word_list[word_num][1]:
            pixmap = QPixmap("laborer.jpg").scaled(300, 300, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
            image_label.show()
-           current_word.setText(audio_word_list[word_num][0] + " of helping the laborer is about to begin")
+           current_word.setText(audio_word_list[word_num][0] + " of helping the laborer is about to begin. Remember, after you have heard the laborer speak each word, acknowledge the word by saying it back as quickly and clearly as possible.")
            current_word.show()
        elif "ATO" in audio_word_list[word_num][1]:
            pixmap = QPixmap("scholar.jpg").scaled(250, 250, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
            image_label.show()
-           current_word.setText(audio_word_list[word_num][0] + " of helping the scholar is about to begin")
+           current_word.setText(audio_word_list[word_num][0] + " of helping the scholar is about to begin. Remember, after you have heard the scholar speak each word, acknowledge the word by saying it back as quickly and clearly as possible.")
            current_word.show()
 
 
@@ -766,5 +768,3 @@ next_button.clicked.connect(next_word)    #When "Next" is clicked, the screen mo
 
 window.show()
 app.exec_()
-
-
