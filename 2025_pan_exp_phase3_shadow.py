@@ -435,7 +435,7 @@ current_word.hide()
 
 
 layout.addSpacerItem(QSpacerItem(0, 100, QSizePolicy.Minimum, QSizePolicy.Preferred)) #spacing between point popup and curent word
-layout.addWidget(current_word)
+layout.addWidget(current_word, alignment=Qt.AlignCenter)
 layout.addSpacerItem(QSpacerItem(0, 200, QSizePolicy.Minimum, QSizePolicy.Preferred))   #Space from Clock/Point countdown to the point_popup
 
 
