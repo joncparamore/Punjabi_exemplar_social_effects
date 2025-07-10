@@ -716,7 +716,7 @@ def next_word():
        current_word.setFont(QFont("Jameel Noori Nastaleeq", 45))
        phase3_word_order_list.append(audio_word_list[word_num])     #output word order into csv for later analysis
        word, path, source = audio_word_list[word_num]
-       phase3_word_order_list.append(word)
+       #phase3_word_order_list.append(word)
 
 
        sound.setSource(QUrl.fromLocalFile(path))
