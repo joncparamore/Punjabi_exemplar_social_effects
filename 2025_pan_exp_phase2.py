@@ -5,25 +5,31 @@ from PyQt5.QtCore import QTimer, Qt, QUrl
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtMultimedia import QSoundEffect
 from collections import defaultdict
+import pandas as pd
 
 
-def build_trial_blocks(word_list, block_size=5):
-    # Shuffle word list to randomize order
-    random.shuffle(word_list)
+def build_trial_blocks(speaker_a_words, speaker_b_words, block_size=5):
 
-    # Create word lists for each speaker
-    speaker_a = [("A", word) for word in word_list]
-    speaker_b = [("B", word) for word in word_list]
+    # Create 3 repetitions for each word
+    speaker_a_trials = [("A", word) for word in speaker_a_words for _ in range(3)]
+    speaker_b_trials = [("B", word) for word in speaker_b_words for _ in range(3)]
 
+    # Shuffle trials for each speaker
+    random.shuffle(speaker_a_trials)
+    random.shuffle(speaker_b_trials)
+
+    # Interleave in blocks of 5, Scholar first
     trials = []
-    total_words = len(word_list)
+    total_blocks = len(speaker_a_trials) // block_size 
 
-    # Interleave blocks by speaker
-    for i in range(0, total_words, block_size):
-        trials.extend(speaker_a[i:i+block_size])
-        trials.extend(speaker_b[i:i+block_size])
+    for i in range(total_blocks):
+        b_block = speaker_b_trials[i * block_size:(i + 1) * block_size]
+        a_block = speaker_a_trials[i * block_size:(i + 1) * block_size]
+        trials.extend(b_block)
+        trials.extend(a_block)
 
     return trials
+
 
 
 class TileGame(QWidget):
@@ -48,10 +54,10 @@ class TileGame(QWidget):
         }
 
         # Load words and corresponding audio
-        self.word_list, self.map_sh_to_audio = self.load_audio_mappings()
-        random.shuffle(self.word_list)
+        speaker_a_words, speaker_b_words, self.map_sh_to_audio = self.load_audio_mappings()
+        self.trials = build_trial_blocks(speaker_a_words, speaker_b_words)
+        self.word_list = speaker_a_words + speaker_b_words
 
-        self.trials = build_trial_blocks(self.word_list)
         self.total_trials = len(self.trials)
 
         # Game state attributes
@@ -60,7 +66,10 @@ class TileGame(QWidget):
         self.trial_counter = 0
         self.points = 0
         self.correct_answer_order = []
-        self.character_points = {"A": 0, "B": 0}
+        self.character_points = {
+        "A": self.scenarios["A"]["starting_points"],
+        "B": self.scenarios["B"]["starting_points"]
+        }
         self.max_points_per_trial = 50
         self.tile_buttons = []
         self.sound = QSoundEffect()
@@ -81,14 +90,15 @@ class TileGame(QWidget):
 
     # Load audio and map words
     def load_audio_mappings(self):
-        change_sh_to_ipa = {}
-        with open("tokens_shahmukhi_ipa.csv", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                shahmukhi_word = row[list(reader.fieldnames)[0]].strip()
-                ipa_word = row["IPA"].strip()
-                change_sh_to_ipa[shahmukhi_word] = ipa_word
 
+        # Load Shahmukhi–IPA mapping from CSV
+        df = pd.read_csv("tokens_shahmukhi_ipa.csv")
+        df.columns = [col.strip() for col in df.columns]
+        shahmukhi_col = df.columns[0]
+        ipa_col = "IPA"
+        change_sh_to_ipa = dict(zip(df[shahmukhi_col].str.strip(), df[ipa_col].str.strip()))
+
+        # Prepare to map IPA → audio paths
         ato_audio_directory = "2025_pan_AT0"
         ak_audio_directory = "2025_pan_AK1"
         match_ipa_to_file = defaultdict(list)
@@ -105,17 +115,29 @@ class TileGame(QWidget):
                 full_path = os.path.join(ak_audio_directory, file_name)
                 match_ipa_to_file[ipa_word].append((full_path, "AK1"))
 
+        # Separate Shahmukhi words by where their IPA appears (AK1 vs ATO)
+        speaker_a_words = []  # AK1 → Laborer
+        speaker_b_words = []  # ATO → Scholar
         map_sh_to_audio = {}
-        valid_words = []
 
         for sh_word, ipa in change_sh_to_ipa.items():
             paths = match_ipa_to_file.get(ipa, [])
             sources = {src: path for path, src in paths}
-            if "AK1" in sources and "ATO" in sources:
+            if "AK1" in sources:
+                speaker_a_words.append(sh_word)
                 map_sh_to_audio[sh_word] = sources
-                valid_words.append(sh_word)
+            elif "ATO" in sources:
+                speaker_b_words.append(sh_word)
+                map_sh_to_audio[sh_word] = sources
 
-        return valid_words, map_sh_to_audio
+        if len(speaker_a_words) < 25 or len(speaker_b_words) < 25:
+            raise ValueError(f"Not enough words: {len(speaker_a_words)} for AK1, {len(speaker_b_words)} for ATO.")
+
+        return speaker_a_words, speaker_b_words, map_sh_to_audio
+
+
+
+
 
 
 
@@ -509,13 +531,13 @@ class TileGame(QWidget):
         if selected_word == self.target_word:
             self.points += pts_left
             self.character_points[self.current_speaker] += pts_left
-            tile_button.setStyleSheet("background-color: green; color: white; font-size: 16px; border-radius: 12px;")
+            tile_button.setStyleSheet("background-color: green; color: white; border-radius: 12px;")
             self.points_label.setText(f"✅ Correct: +{pts_left} pts")
             QTimer.singleShot(1500, self.show_block_instruction)
         else:
             self.points -= 50
             self.character_points[self.current_speaker] -= 50
-            tile_button.setStyleSheet("background-color: red; color: white; font-size: 16px; border-radius: 12px;")
+            tile_button.setStyleSheet("background-color: red; color: white; border-radius: 12px;")
             msg = self.scenarios[self.current_speaker]["wrong_msg"]
             self.points_label.setText(f"❌ {msg} (-50 pts)")
             self.total_points_label.setText(f"Total Points: {self.points}")
@@ -524,7 +546,7 @@ class TileGame(QWidget):
             def highlight_correct_tile():
                 for btn in self.tile_buttons:
                     if btn.text() == self.target_word:
-                        btn.setStyleSheet("background-color: green; color: white; font-size: 16px; border-radius: 12px;")
+                        btn.setStyleSheet("background-color: green; color: white; border-radius: 12px;")
                         break
                 QTimer.singleShot(1000, self.show_block_instruction)
 
