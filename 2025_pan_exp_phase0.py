@@ -39,7 +39,7 @@ class Phase0Window(QWidget):
     #escape button
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
-            self.showNormal()
+            self.showMaximized()
 
 app = QApplication([])
 window = Phase0Window()
