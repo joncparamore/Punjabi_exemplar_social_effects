@@ -125,6 +125,7 @@ audio_word_list += [("Section 10", "AK1")] + block2
 audio_word_list += [("Section 11", "ATO")] + block3
 audio_word_list += [("Section 12", "AK1")] + block4
 
+audio_word_list += [("Section 13: Missed Words", "Missed Words")]
 
 sound = QSoundEffect()
 word_num = 0  
@@ -444,7 +445,7 @@ layout.addSpacerItem(QSpacerItem(0, 200, QSizePolicy.Minimum, QSizePolicy.Prefer
 #---------------Create Instructions for the first screen only---------------#
 
 
-instructions = QLabel("This phase will test your language listening and speaking abilities. Thanks to your work in the previous phase, the laborer has now learned how to read his words and the scholar has added his words into the dictionary. The scholar and laborer are now going to say each of their words aloud, one at a time. After hearing each word, acknowledge you have heard it by saying it back as quickly and clearly as possible to earn points. After the audio file plays, you will have 3 seconds to read each word aloud and click the 'Done' button after you are finished speaking. Click the 'Next' button to move onto the next word", window)
+instructions = QLabel("Good work! Thanks to your help in the previous game, Rafiq has learned to read his words, and Dr. Ali has added them to the official Punjabi dictionary. Now, Rafiq and Dr. Ali will each say their words aloud, one at a time. After hearing each word, your task is to repeat it as quickly and clearly as possible to earn points. You will have three seconds to say the word aloud and then click the “Done” button once you finish speaking. When you're ready, click the “Next” button to move on to the next word.", window)
 instructions.setFont(QFont("Verdana", 14))
 instructions.setStyleSheet("line-height: 150%")
 instructions.setWordWrap(True)
@@ -641,68 +642,72 @@ def next_word():
    word_points_left = 90
   
    if word_num >= len(audio_word_list):                     #Ending screen that only occurs once all words in the list have been said
-       timer.stop()
-       clock.hide()
-       next_button.hide()
-       done_button.hide()
-       #laborer_image.show()
-       image_label.hide()
-       #scholar_image.hide()
-       point_countdown.hide()
+        timer.stop()
+        clock.hide()
+        next_button.hide()
+        done_button.hide()
+        #laborer_image.show()
+        image_label.hide()
+        #scholar_image.hide()
+        point_countdown.hide()
 
 
-       current_word.setText("All finished!")
-       current_word.setFont(QFont("Verdana", 40))
-       current_word.adjustSize()
+        current_word.setText("All finished!")
+        current_word.setFont(QFont("Verdana", 40))
+        current_word.adjustSize()
 
 
-       total_points.setFont(QFont("Verdana", 24))
-       total_points.setStyleSheet("background-color: lightgreen; border: 2 px; padding: 10px; border-radius: 5px")
-       total_points.adjustSize()
-       layout.addWidget(total_points, alignment=Qt.AlignCenter) 
-       layout.addSpacerItem(QSpacerItem(0, 540, QSizePolicy.Minimum, QSizePolicy.Preferred))
-
-
+        total_points.setFont(QFont("Verdana", 24))
+        total_points.setStyleSheet("background-color: lightgreen; border: 2 px; padding: 10px; border-radius: 5px")
+        total_points.adjustSize()
+        layout.addWidget(total_points, alignment=Qt.AlignCenter) 
+        layout.addSpacerItem(QSpacerItem(0, 540, QSizePolicy.Minimum, QSizePolicy.Preferred))
+        
 
 
       
-       filename = f"{user_id}_phase3_shadow_word_order.csv"   #Download the .csv of all of the words once you have reached the end of the list
-       with open(filename, 'w', newline='', encoding='utf-8') as file:
-           writer = csv.writer(file)
-           for word in phase3_word_order_list:
-               writer.writerow([word])
+        filename = f"{user_id}_phase3_shadow_word_order.csv"   #Download the .csv of all of the words once you have reached the end of the list
+        with open(filename, 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Shahmukhi Word", "Audio File Path", "Speaker Source"])
+            for word in phase3_word_order_list:
+               writer.writerow(word)
 
-
+        return
 
 
    #If a section divider has been reached
-   if "Section" in audio_word_list[word_num][0]:
-       image_label.hide
-       clock.hide()
-       point_countdown.hide()
-       next_button.hide()
-       done_button.hide()
-       start_button.show()                     #To move to the next button they click "start" which then runs the same starting function as before to set up for the words
-       current_word.setFont(QFont("Verdana", 18))
-       current_word.setWordWrap(True)
-       current_word.setFixedWidth(1200)
-       current_word.adjustSize()
-       if "AK1" in audio_word_list[word_num][1]:
+   elif "Section" in audio_word_list[word_num][0]:
+        image_label.hide
+        clock.hide()
+        point_countdown.hide()
+        next_button.hide()
+        done_button.hide()
+        start_button.show()                     #To move to the next button they click "start" which then runs the same starting function as before to set up for the words
+        current_word.setFont(QFont("Verdana", 18))
+        current_word.setWordWrap(True)
+        current_word.setFixedWidth(1200)
+        current_word.adjustSize()
+        if "AK1" in audio_word_list[word_num][1]:
            pixmap = QPixmap("laborer.jpg").scaled(300, 300, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
            image_label.show()
-           current_word.setText(audio_word_list[word_num][0] + " of helping the laborer is about to begin. Remember, after you have heard the laborer speak each word, acknowledge the word by clearly saying it back.")
+           current_word.setText(audio_word_list[word_num][0] + " of helping Rafiq is about to begin. Remember, after Rafiq speaks each word, acknowledge the word by clearly saying it back.")
            current_word.show()
-       elif "ATO" in audio_word_list[word_num][1]:
+        elif "ATO" in audio_word_list[word_num][1]:
            pixmap = QPixmap("scholar.jpg").scaled(250, 250, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
            image_label.show()
-           current_word.setText(audio_word_list[word_num][0] + " of helping the scholar is about to begin. Remember, after you have heard the scholar speak each word, acknowledge the word by clearly saying it back.")
+           current_word.setText(audio_word_list[word_num][0] + " of helping Dr. Ali is about to begin. Remember, after Dr. Ali speaks each word, acknowledge the word by clearly saying it back.")
            current_word.show()
+        else:
+            image_label.hide()
+            current_word.setText(audio_word_list[word_num][0] + " is about to begin. If you ran out of time to say any words, you will have a chance to listen to them and redo them here.")
+            current_word.show()
 
-
-       word_num += 1 
-       return
+        
+        word_num += 1 
+        return
 
 
 
