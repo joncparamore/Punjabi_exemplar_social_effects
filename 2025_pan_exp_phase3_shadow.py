@@ -444,8 +444,8 @@ layout.addSpacerItem(QSpacerItem(0, 200, QSizePolicy.Minimum, QSizePolicy.Prefer
 #---------------Create Instructions for the first screen only---------------#
 
 
-instructions = QLabel("This phase will test your language listening and speaking abilities. After hearing each word, acknowledge you have heard it by saying it back as quickly and clearly as possible to earn points. You will have 2 seconds to read each word aloud and click the 'Done' button after you are finished speaking. Click the 'Next' button to move onto the next word", window)
-instructions.setFont(QFont("Verdana", 15))
+instructions = QLabel("This phase will test your language listening and speaking abilities. Thanks to your work in the previous phase, the laborer has now learned how to read his words, and the scholar has added his words into the dictionary. The scholar and laborer are now going to say each of their words aloud. After hearing each word, acknowledge you have heard it by saying it back as quickly and clearly as possible to earn points. After the audio file plays, you will have 2 seconds to read each word aloud and click the 'Done' button after you are finished speaking. Click the 'Next' button to move onto the next word", window)
+instructions.setFont(QFont("Verdana", 14))
 instructions.setStyleSheet("line-height: 150%")
 instructions.setWordWrap(True)
 instructions.setFixedSize(800,300)
