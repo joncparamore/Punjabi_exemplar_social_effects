@@ -376,15 +376,14 @@ class TileGame(QWidget):
             return
 
         # Check if file actually exists
-        import os
-        if not os.path.exists(audio_path):
-            print(f" ERROR: Audio file does NOT exist: {audio_path}")
-            return
-        else:
-            print(" Audio file exists.")
+        #if not os.path.exists(audio_path):
+            #print(f" ERROR: Audio file does NOT exist: {audio_path}")
+            #return
+        #else:
+            #print(" Audio file exists.")
 
         self.sound.setSource(QUrl.fromLocalFile(audio_path))
-        print(f" Sound status after setSource: {self.sound.status()}")  # Should be 2 for Ready
+        #print(f" Sound status after setSource: {self.sound.status()}")  # Should be 2 for Ready
 
         self.sound.play()
 
