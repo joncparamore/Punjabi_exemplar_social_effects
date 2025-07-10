@@ -212,7 +212,7 @@ id_label.setAlignment(Qt.AlignCenter)
 
 id_input = QLineEdit(window)
 id_input.setFont(QFont("Verdana", 20))
-id_input.setFixedWidth(400)
+id_input.setFixedWidth(800)
 id_input.setPlaceholderText("e.g., jsmith123")
 id_input.setAlignment(Qt.AlignCenter)
 
