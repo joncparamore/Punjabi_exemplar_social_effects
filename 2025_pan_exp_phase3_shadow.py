@@ -186,7 +186,7 @@ layout.setAlignment(Qt.AlignCenter)
 
 
 
-window.setWindowTitle("Baseline Window")
+window.setWindowTitle("Phase 3 Window")
 window.setLayout(layout)
 window.showFullScreen()
 
@@ -691,13 +691,13 @@ def next_word():
            pixmap = QPixmap("laborer.jpg").scaled(300, 300, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
            image_label.show()
-           current_word.setText(audio_word_list[word_num][0] + " of helping the laborer is about to begin. Remember, after you have heard the laborer speak each word, acknowledge the word by saying it back as quickly and clearly as possible.")
+           current_word.setText(audio_word_list[word_num][0] + " of helping the laborer is about to begin. Remember, after you have heard the laborer speak each word, acknowledge the word by clearly saying it back.")
            current_word.show()
        elif "ATO" in audio_word_list[word_num][1]:
            pixmap = QPixmap("scholar.jpg").scaled(250, 250, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
            image_label.show()
-           current_word.setText(audio_word_list[word_num][0] + " of helping the scholar is about to begin. Remember, after you have heard the scholar speak each word, acknowledge the word by saying it back as quickly and clearly as possible.")
+           current_word.setText(audio_word_list[word_num][0] + " of helping the scholar is about to begin. Remember, after you have heard the scholar speak each word, acknowledge the word by clearly saying it back.")
            current_word.show()
 
 
@@ -716,7 +716,7 @@ def next_word():
        current_word.setFont(QFont("Jameel Noori Nastaleeq", 45))
        phase3_word_order_list.append(audio_word_list[word_num])     #output word order into csv for later analysis
        word, path, source = audio_word_list[word_num]
-       phase3_word_order_list.append(word)
+       #phase3_word_order_list.append(word)
 
 
        sound.setSource(QUrl.fromLocalFile(path))
