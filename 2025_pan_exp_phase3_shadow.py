@@ -581,7 +581,7 @@ def next_word():
 
         def on_audio_finished():        #Only start clock and point countdown after the sound plays
             if not sound.isPlaying():
-                done_button.setFont(QFont("Verdana", 22))``
+                done_button.setFont(QFont("Verdana", 22))
                 done_button.setStyleSheet("background-color: lightblue; padding: 20px; border: 2 px; border-radius: 5px")        #Reset Done button
                 done_button.show()
                 timer.start()
