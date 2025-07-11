@@ -45,10 +45,10 @@ class TileGame(QWidget):
 
         #character info
         self.scenarios = {
-            "A": {"name": "Laborer", "starting_points": 1000,
+            "A": {"name": "Mohammad Rafiq's", "starting_points": 1000,
                   "timeout_msg": "He couldn't learn that word.",
                   "wrong_msg": "He learned the wrong spelling."},
-            "B": {"name": "Scholar", "starting_points": 100000,
+            "B": {"name": "Professor Abdul Ali's", "starting_points": 100000,
                   "timeout_msg": "That word couldn't be added to the dictionary.",
                   "wrong_msg": "The wrong spelling was added to the dictionary."}
         }
@@ -285,8 +285,16 @@ class TileGame(QWidget):
             self.points_label.clear()
             self.target_word_label.hide()
             self.current_speaker, _ = self.trials[self.trial_counter]
-            text = ("You will hear a series of spoken words. After each word, click the matching word tile "
-                    f"to help {self.scenarios[self.current_speaker]['name']} complete their goal.")
+            if self.current_speaker == "A":
+                text = ("This is Mohammad Rafiq. He works at a brick kiln near Faisalabad and is hoping to apply for a new position "
+            "as a helper in the Punjabi language department at a local college. The role requires basic literacy in Punjabi. "
+            "He is beginning to learn how to read, but needs your help matching words to the correct Punjabi spelling. "
+            "When Rafiq pronounces a word, select the correct spelling as quickly as possible to help him learn each word.")
+            else:
+                text = ("This is Dr. Abdul Ali. He is a distinguished professor of Punjabi Translation Studies at a well-known university "
+            "in Islamabad. He is compiling a Punjabi dictionary to promote a wider use of the language in Pakistan. "
+            "Help Dr. Ali find the words he wants to include in the dictionary as fast as possible.")
+
             self.instructions.setText(text)
             # position instructions based on character
             y_pos = 0.62 if self.current_speaker == "B" else 0.58
