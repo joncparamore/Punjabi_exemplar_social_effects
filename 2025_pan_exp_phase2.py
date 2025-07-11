@@ -45,10 +45,10 @@ class TileGame(QWidget):
 
         #character info
         self.scenarios = {
-            "A": {"name": "Mohammad Rafiq's", "starting_points": 1000,
+            "A": {"name": "Mohammad Rafiq's",
                   "timeout_msg": "He couldn't learn that word.",
                   "wrong_msg": "He learned the wrong spelling."},
-            "B": {"name": "Professor Abdul Ali's", "starting_points": 100000,
+            "B": {"name": "Professor Abdul Ali's",
                   "timeout_msg": "That word couldn't be added to the dictionary.",
                   "wrong_msg": "The wrong spelling was added to the dictionary."}
         }
@@ -66,10 +66,6 @@ class TileGame(QWidget):
         self.trial_counter = 0
         self.points = 0
         self.correct_answer_order = []
-        self.character_points = {
-        "A": self.scenarios["A"]["starting_points"],
-        "B": self.scenarios["B"]["starting_points"]
-        }
         self.max_points_per_trial = 50
         self.tile_buttons = []
         self.sound = QSoundEffect()
@@ -80,7 +76,6 @@ class TileGame(QWidget):
         self.phase2_title.hide()
         self.next_button.hide()
         self.play_word_button.hide()
-        self.char_points_label.hide()
         self.total_points_label.hide()
         self.clock.hide()
         self.point_countdown.hide()
@@ -157,23 +152,17 @@ class TileGame(QWidget):
         self.next_button = QPushButton("Start", self)
         self.next_button.setFont(QFont("Verdana", self.scale_h(0.018)))
         self.next_button.resize(self.scale_w(0.15), self.scale_h(0.07))
-        self.next_button.move((self.screen_width - self.next_button.width()) // 2, self.scale_h(0.70))
+        self.next_button.move((self.screen_width - self.next_button.width()) // 2, self.scale_h(0.75))
         self.next_button.setStyleSheet("background-color: lightgray; border-radius: 10px;")
         self.next_button.clicked.connect(self.start_first_instruction)
 
         self.play_word_button = QPushButton("Play Word", self)
         self.play_word_button.setFont(QFont("Verdana", self.scale_w(0.012)))
         self.play_word_button.resize(self.scale_w(0.15), self.scale_h(0.07))
-        self.play_word_button.move((self.screen_width - self.play_word_button.width()) // 2, self.scale_h(0.70))
+        self.play_word_button.move((self.screen_width - self.play_word_button.width()) // 2, self.scale_h(0.75))
         self.play_word_button.setStyleSheet("background-color: lightblue; border-radius: 10px;")
         self.play_word_button.clicked.connect(self.handle_play_word)
         self.play_word_button.hide()
-
-        self.char_points_label = QLabel(self)
-        self.char_points_label.setFont(QFont("Verdana", self.scale_h(0.016)))
-        self.char_points_label.move(self.scale_w(0.02), self.scale_h(0.06))
-        self.char_points_label.resize(self.scale_w(0.2), 30)
-        self.char_points_label.hide()
 
         icon_size = self.scale_w(0.125)
         self.char_icon = QLabel(self)
@@ -307,7 +296,6 @@ class TileGame(QWidget):
 
             self.clock.hide()
             self.point_countdown.hide()
-            self.char_points_label.hide()
             self.total_points_label.hide()
 
             if self.current_speaker == "B":
@@ -352,7 +340,6 @@ class TileGame(QWidget):
         self.char_icon.show()
 
         # Hide everything else
-        self.char_points_label.hide()
         self.total_points_label.hide()
         self.clock.hide()
         self.point_countdown.hide()
@@ -423,7 +410,6 @@ class TileGame(QWidget):
             self.clock.hide()
             self.point_countdown.hide()
             self.char_icon.hide()
-            self.char_points_label.hide()
             self.total_points_label.hide()
 
             self.final_message = QLabel("All finished!", self)
@@ -435,8 +421,6 @@ class TileGame(QWidget):
             y_base = 160
             for label_text in [
                     f"Your Points: {self.points}",
-                    f"Laborer: {self.character_points['A']}",
-                    f"Scholar: {self.character_points['B']}"
                     ]:
                 label = QLabel(label_text, self)
                 label.setFont(QFont("Verdana", self.scale_w(0.015)))
@@ -451,7 +435,7 @@ class TileGame(QWidget):
         self.correct_answer_order.append(self.target_word)
         scenario = self.scenarios[self.current_speaker]
 
-        # Resize/reposition character image to SMALL version now
+        # Resize character image to small version 
         if self.current_speaker == "B":
             small_size = self.scale_w(0.18)
             self.char_icon.resize(small_size, small_size)
@@ -466,12 +450,10 @@ class TileGame(QWidget):
         self.char_icon.setPixmap(pixmap)
         self.char_icon.show()
 
-        # Show character and total points labels now (not earlier)
-        self.char_points_label.setText(f"{scenario['name']} Points: {self.character_points[self.current_speaker]}")
+        # Show total points labels now 
         self.total_points_label.setText(f"Total Points: {self.points}")
         self.total_points_label.show()
         self.points_label.show()
-        self.char_points_label.show()
 
         self.trial_counter += 1
         self.points_label.setText("")
@@ -548,18 +530,15 @@ class TileGame(QWidget):
 
         if selected_word == self.target_word:
             self.points += pts_left
-            self.character_points[self.current_speaker] += pts_left
             tile_button.setStyleSheet("background-color: green; color: white; border-radius: 12px;")
             self.points_label.setText(f"✅ Correct: +{pts_left} pts")
             QTimer.singleShot(3000, self.show_block_instruction)
         else:
             self.points -= 50
-            self.character_points[self.current_speaker] -= 50
             tile_button.setStyleSheet("background-color: red; color: white; border-radius: 12px;")
             msg = self.scenarios[self.current_speaker]["wrong_msg"]
             self.points_label.setText(f"❌ {msg} (-50 pts)")
             self.total_points_label.setText(f"Total Points: {self.points}")
-            self.char_points_label.setText(f"{self.scenarios[self.current_speaker]['name']} Points: {self.character_points[self.current_speaker]}")
 
             def highlight_correct_tile():
                 for btn in self.tile_buttons:
