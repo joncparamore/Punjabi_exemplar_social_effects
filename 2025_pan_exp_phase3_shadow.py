@@ -108,24 +108,50 @@ block4 = ak1_words[12:]  # Remaining 13
 #Build Audio Word List with the section headers
 audio_word_list = []
 
-audio_word_list += [("Section 1", "ATO")] + block1
-audio_word_list += [("Section 2", "AK1")] + block2
-audio_word_list += [("Section 3", "ATO")] + block3
-audio_word_list += [("Section 4", "AK1")] + block4
+start_with_random = random.choice(["ATO", "AK1"])
 
 
-audio_word_list += [("Section 5", "ATO")] + block1
-audio_word_list += [("Section 6", "AK1")] + block2
-audio_word_list += [("Section 7", "ATO")] + block3
-audio_word_list += [("Section 8", "AK1")] + block4
+if start_with_random == "ATO":
+    audio_word_list += [("Section 1", "ATO")] + block1
+    audio_word_list += [("Section 2", "AK1")] + block2
+    audio_word_list += [("Section 3", "ATO")] + block3
+    audio_word_list += [("Section 4", "AK1")] + block4
+    
+    
+    audio_word_list += [("Section 5", "ATO")] + block1
+    audio_word_list += [("Section 6", "AK1")] + block2
+    audio_word_list += [("Section 7", "ATO")] + block3
+    audio_word_list += [("Section 8", "AK1")] + block4
+    
+    
+    audio_word_list += [("Section 9", "ATO")] + block1
+    audio_word_list += [("Section 10", "AK1")] + block2
+    audio_word_list += [("Section 11", "ATO")] + block3
+    audio_word_list += [("Section 12", "AK1")] + block4
+    
+    audio_word_list += [("Section 13: Missed Words", "Missed Words")]
 
 
-audio_word_list += [("Section 9", "ATO")] + block1
-audio_word_list += [("Section 10", "AK1")] + block2
-audio_word_list += [("Section 11", "ATO")] + block3
-audio_word_list += [("Section 12", "AK1")] + block4
+else:
+    audio_word_list += [("Section 1", "AK1")] + block2
+    audio_word_list += [("Section 2", "ATO")] + block1
+    audio_word_list += [("Section 3", "AK1")] + block4
+    audio_word_list += [("Section 4", "ATO")] + block3
+    
+    audio_word_list += [("Section 5", "AK1")] + block2
+    audio_word_list += [("Section 6", "ATO")] + block1
+    audio_word_list += [("Section 7", "AK1")] + block4
+    audio_word_list += [("Section 8", "ATO")] + block3
+    
+    audio_word_list += [("Section 9", "AK1")] + block2
+    audio_word_list += [("Section 10", "ATO")] + block1
+    audio_word_list += [("Section 11", "AK1")] + block4
+    audio_word_list += [("Section 12", "ATO")] + block3
+    
+    
+    audio_word_list += [("Section 13: Missed Words", "Missed Words")]
 
-audio_word_list += [("Section 13: Missed Words", "Missed Words")]
+    
 
 sound = QSoundEffect()
 word_num = 0  
@@ -716,7 +742,7 @@ def next_word():
 
    if word_num < len(audio_word_list):
        clock.setText("2.0   sec")                    #Reset the clock, begin the clock on the subsequent line
-       point_countdown.setText("90  pts")
+       point_countdown.setText("60  pts")
        current_word.setText(audio_word_list[word_num][0])        #Do we want to show the word on the screen too?
        current_word.setFont(QFont("Jameel Noori Nastaleeq", 45))
        phase3_word_order_list.append(audio_word_list[word_num])     #output word order into csv for later analysis
