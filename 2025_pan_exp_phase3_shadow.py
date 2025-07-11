@@ -686,7 +686,7 @@ def next_word():
         start_button.show()                     #To move to the next button they click "start" which then runs the same starting function as before to set up for the words
         current_word.setFont(QFont("Verdana", 18))
         current_word.setWordWrap(True)
-        current_word.setFixedWidth(1200)
+        current_word.setFixedWidth(2000)
         current_word.adjustSize()
         if "AK1" in audio_word_list[word_num][1]:
            pixmap = QPixmap("laborer.jpg").scaled(300, 300, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
