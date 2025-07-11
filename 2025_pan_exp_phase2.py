@@ -17,16 +17,22 @@ def build_trial_blocks(speaker_a_words, speaker_b_words, block_size=5):
     # Shuffle trials for each speaker
     random.shuffle(speaker_a_trials)
     random.shuffle(speaker_b_trials)
+    
+    # Break into blocks of size `block_size`
+    a_blocks = [speaker_a_trials[i:i + block_size] for i in range(0, len(speaker_a_trials), block_size)]
+    b_blocks = [speaker_b_trials[i:i + block_size] for i in range(0, len(speaker_b_trials), block_size)]
 
     # Interleave in blocks of 5, Scholar first
+    start_with_a = random.choice([True, False])
     trials = []
-    total_blocks = len(speaker_a_trials) // block_size 
 
-    for i in range(total_blocks):
-        b_block = speaker_b_trials[i * block_size:(i + 1) * block_size]
-        a_block = speaker_a_trials[i * block_size:(i + 1) * block_size]
-        trials.extend(b_block)
-        trials.extend(a_block)
+    for i in range(min(len(a_blocks), len(b_blocks))):
+        if start_with_a:
+            trials.extend(a_blocks[i])
+            trials.extend(b_blocks[i])
+        else:
+            trials.extend(b_blocks[i])
+            trials.extend(a_blocks[i])
 
     return trials
 
@@ -65,6 +71,7 @@ class TileGame(QWidget):
         self.replay_used = False
         self.trial_counter = 0
         self.points = 0
+        self.trial_results = []
         self.correct_answer_order = []
         self.max_points_per_trial = 50
         self.tile_buttons = []
@@ -471,8 +478,22 @@ class TileGame(QWidget):
         filename = f"phase2_correct_order_{self.user_id}.csv"
         with open(filename, "w", newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
-            for word in self.correct_answer_order:
-                writer.writerow([word])
+            writer.writerow(["Word", "Result"])
+            for word, result in self.trial_results:
+                writer.writerow([word, result])
+                
+            # Calculate summary
+            total = len(self.trial_results)
+            correct = sum(1 for _, r in self.trial_results if r == "correct")
+            incorrect = sum(1 for _, r in self.trial_results if r == "incorrect")
+            timed_out = sum(1 for _, r in self.trial_results if r == "timed_out")
+
+            writer.writerow([])
+            writer.writerow(["Summary"])
+            writer.writerow(["Total Trials", total])
+            writer.writerow(["Correct (%)", f"{correct} ({correct / total:.2%})"])
+            writer.writerow(["Incorrect (%)", f"{incorrect} ({incorrect / total:.2%})"])
+            writer.writerow(["Timed Out (%)", f"{timed_out} ({timed_out / total:.2%})"])
 
     # Generate tile grid
     def create_tiles(self):
@@ -521,6 +542,9 @@ class TileGame(QWidget):
             
             msg = self.scenarios[self.current_speaker]["timeout_msg"]
             self.points_label.setText(f" {msg} (0 pts)")
+            
+            self.trial_results.append((self.target_word, "timed_out"))
+            
             QTimer.singleShot(3000, self.show_block_instruction)
 
     def check_tile_click(self, selected_word, tile_button):
@@ -532,6 +556,7 @@ class TileGame(QWidget):
             self.points += pts_left
             tile_button.setStyleSheet("background-color: green; color: white; border-radius: 12px;")
             self.points_label.setText(f"✅ Correct: +{pts_left} pts")
+            self.trial_results.append((self.target_word, "correct"))
             QTimer.singleShot(3000, self.show_block_instruction)
         else:
             self.points -= 50
@@ -539,6 +564,7 @@ class TileGame(QWidget):
             msg = self.scenarios[self.current_speaker]["wrong_msg"]
             self.points_label.setText(f"❌ {msg} (-50 pts)")
             self.total_points_label.setText(f"Total Points: {self.points}")
+            self.trial_results.append((self.target_word, "incorrect"))
 
             def highlight_correct_tile():
                 for btn in self.tile_buttons:
