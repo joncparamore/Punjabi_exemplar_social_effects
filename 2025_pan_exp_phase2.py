@@ -579,6 +579,7 @@ class TileGame(QWidget):
             tile.setParent(None)
             tile.deleteLater()
         self.tile_buttons.clear()
+        
 
     # Exit shortcut
     def keyPressEvent(self, event):
