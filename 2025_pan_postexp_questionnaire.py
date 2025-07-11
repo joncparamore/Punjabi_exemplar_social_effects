@@ -89,7 +89,7 @@ def show_questionnaire_form():
             return
         
         #add question answers to csv
-        with open("questionnairre.csv", "a", newline='', encoding='utf-8-sig') as f:
+        with open("questionnaire.csv", "a", newline='', encoding='utf-8-sig') as f:
             writer = csv.writer(f)
             if f.tell() == 0:
                 writer.writerow(list(question_data.keys()))
