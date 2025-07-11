@@ -55,7 +55,7 @@ feedback_shown = False
 
 
 #Used to export and keep track of word order
-phase1_word_order_list = []
+phase4_word_order_list = []
 
 
 #---------------Create Window---------------#
