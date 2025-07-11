@@ -710,7 +710,7 @@ def next_word():
         next_button.hide()
         done_button.hide()
         start_button.show()                     #To move to the next button they click "start" which then runs the same starting function as before to set up for the words
-        current_word.setFont(QFont("Verdana", 13))
+        current_word.setFont(QFont("Verdana", 15))
         current_word.setWordWrap(True)
         current_word.setFixedWidth(2000)
         current_word.adjustSize()
