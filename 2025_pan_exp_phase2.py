@@ -52,9 +52,9 @@ class TileGame(QWidget):
         #character info
         self.scenarios = {
             "A": {"name": "Mohammad Rafiq's",
-                  "timeout_msg": "He couldn't learn that word.",
-                  "wrong_msg": "He learned the wrong spelling."},
-            "B": {"name": "Professor Abdul Ali's",
+                  "timeout_msg": "Rafiq couldn't learn that word.",
+                  "wrong_msg": "Rafiq learned the wrong spelling."},
+            "B": {"name": "Dr. Professor Abdul Ali",
                   "timeout_msg": "That word couldn't be added to the dictionary.",
                   "wrong_msg": "The wrong spelling was added to the dictionary."}
         }
@@ -287,7 +287,7 @@ class TileGame(QWidget):
             "He is beginning to learn how to read, but needs your help matching words to the correct Punjabi spelling. "
             "When Rafiq pronounces a word, select the correct spelling as quickly as possible to help him learn each word.")
             else:
-                text = ("This is Dr. Abdul Ali. He is a distinguished professor of Punjabi Translation Studies at a well-known university "
+                text = ("This is Dr. Professor Abdul Ali. He is a distinguished professor of Punjabi Translation Studies at a well-known university "
             "in Islamabad. He is compiling a Punjabi dictionary to promote a wider use of the language in Pakistan. "
             "Help Dr. Ali find the words he wants to include in the dictionary as fast as possible.")
 
@@ -475,7 +475,7 @@ class TileGame(QWidget):
 
     # CSV output
     def save_csv_output(self):
-        filename = f"phase2_correct_order_{self.user_id}.csv"
+        filename = f"{self.user_id}_phase2_correct_order.csv"
         with open(filename, "w", newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(["Word", "Result"])
