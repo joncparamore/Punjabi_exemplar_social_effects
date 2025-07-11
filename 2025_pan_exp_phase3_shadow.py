@@ -446,7 +446,7 @@ layout.addSpacerItem(QSpacerItem(0, 200, QSizePolicy.Minimum, QSizePolicy.Prefer
 
 
 instructions = QLabel("Good work! Thanks to your help in the previous game, Rafiq has learned to read his words, and Dr. Ali has added them to the official Punjabi dictionary. Now, Rafiq and Dr. Ali will each say their words aloud, one at a time. After hearing each word, your task is to repeat it as quickly and clearly as possible to earn points. You will have two seconds to say the word aloud and then click the “Done” button once you finish speaking. When you're ready, click the “Next” button to move on to the next word.", window)
-instructions.setFont(QFont("Verdana", 14))
+instructions.setFont(QFont("Verdana", 12))
 instructions.setStyleSheet("line-height: 150%")
 instructions.setWordWrap(True)
 instructions.setFixedSize(800,300)
