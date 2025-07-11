@@ -148,7 +148,7 @@ random.shuffle(word_list)
 '''
 
 
-word_points_left = 90
+word_points_left = 60
 feedback_shown = False
 
 
@@ -314,7 +314,7 @@ point_countdown.hide()
 
 timer=QTimer()
 timer.setInterval(100)      #Use 1 decisecond = 100 milliseconds
-deciseconds_left = 30
+deciseconds_left = 20
 
 
 
@@ -445,7 +445,7 @@ layout.addSpacerItem(QSpacerItem(0, 200, QSizePolicy.Minimum, QSizePolicy.Prefer
 #---------------Create Instructions for the first screen only---------------#
 
 
-instructions = QLabel("Good work! Thanks to your help in the previous game, Rafiq has learned to read his words, and Dr. Ali has added them to the official Punjabi dictionary. Now, Rafiq and Dr. Ali will each say their words aloud, one at a time. After hearing each word, your task is to repeat it as quickly and clearly as possible to earn points. You will have three seconds to say the word aloud and then click the “Done” button once you finish speaking. When you're ready, click the “Next” button to move on to the next word.", window)
+instructions = QLabel("Good work! Thanks to your help in the previous game, Rafiq has learned to read his words, and Dr. Ali has added them to the official Punjabi dictionary. Now, Rafiq and Dr. Ali will each say their words aloud, one at a time. After hearing each word, your task is to repeat it as quickly and clearly as possible to earn points. You will have two seconds to say the word aloud and then click the “Done” button once you finish speaking. When you're ready, click the “Next” button to move on to the next word.", window)
 instructions.setFont(QFont("Verdana", 14))
 instructions.setStyleSheet("line-height: 150%")
 instructions.setWordWrap(True)
@@ -638,8 +638,8 @@ def next_word():
    done_button.setEnabled(False)
    next_button.hide()
    point_popup.setText("")
-   deciseconds_left = 30        #reset the clock and the points
-   word_points_left = 90
+   deciseconds_left = 20        #reset the clock and the points
+   word_points_left = 60
   
    if word_num >= len(audio_word_list):                     #Ending screen that only occurs once all words in the list have been said
         timer.stop()
@@ -715,7 +715,7 @@ def next_word():
 
 
    if word_num < len(audio_word_list):
-       clock.setText("3.0   sec")                    #Reset the clock, begin the clock on the subsequent line
+       clock.setText("2.0   sec")                    #Reset the clock, begin the clock on the subsequent line
        point_countdown.setText("90  pts")
        current_word.setText(audio_word_list[word_num][0])        #Do we want to show the word on the screen too?
        current_word.setFont(QFont("Jameel Noori Nastaleeq", 45))
