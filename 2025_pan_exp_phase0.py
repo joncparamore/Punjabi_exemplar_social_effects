@@ -52,8 +52,7 @@ window.setLayout(layout)
 
 #------------Code that tracks the word order as csv----------#
 
-#Used to export and keep track of word order
-phase1_word_order_list = []
+
 
 from collections import defaultdict
 dictionary_csv_file = "tokens_shahmukhi_ipa.csv"
