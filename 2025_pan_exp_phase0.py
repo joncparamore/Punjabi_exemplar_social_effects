@@ -48,8 +48,41 @@ layout = QVBoxLayout()
 layout.setAlignment(Qt.AlignCenter)
 window.setLayout(layout)
 
-#---------------Global Storage---------------#
+
+
+#------------Code that tracks the word order as csv----------#
+
+#Used to export and keep track of word order
+phase1_word_order_list = []
+
+from collections import defaultdict
+dictionary_csv_file = "tokens_shahmukhi_ipa.csv"
+
+
+
+# Map the  Shahmukhi words to IPA
+
 phase0_word_order_list = []
+
+shahmukhi_to_ipa = {}
+
+with open(dictionary_csv_file, encoding="utf-8") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        ipa = row["IPA"].strip()
+        shahmukhi = row[list(reader.fieldnames)[0]].strip()
+        shahmukhi_to_ipa[shahmukhi] = ipa
+
+
+
+#---------------Global Storage---------------#
+
+
+
+
+
+
+
 demographic_data = {
     "name": "", "age": "", "sex": "", "native_lang": "",
     "langs_spoken": [], "birthplace": "", "currenttown": "",
@@ -289,8 +322,12 @@ def display_next_word():
         filename = f"{user_id}_phase0_warmup_word_order.csv"
         with open(filename, 'w', newline='', encoding='utf-8-sig') as file:
             writer = csv.writer(file)
+            writer.writerow(["Shahmukhi", "IPA"])  
             for word in phase0_word_order_list:
-                writer.writerow([word])
+                ipa = shahmukhi_to_ipa.get(word, "N/A") 
+                writer.writerow([word, ipa])
+
+
 
 def start_experiment():
     instructions.hide()
