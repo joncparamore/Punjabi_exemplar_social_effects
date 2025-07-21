@@ -54,8 +54,32 @@ word_points_left = 60
 feedback_shown = False
 
 
+
+#------------Code that tracks the word order as csv----------#
+
+
+
 #Used to export and keep track of word order
 phase4_word_order_list = []
+
+
+from collections import defaultdict
+dictionary_csv_file = "tokens_shahmukhi_ipa.csv"
+
+
+# Map the  Shahmukhi words to IPA
+
+
+shahmukhi_to_ipa = {}
+
+with open(dictionary_csv_file, encoding="utf-8") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        ipa = row["IPA"].strip()
+        shahmukhi = row[list(reader.fieldnames)[0]].strip()
+        shahmukhi_to_ipa[shahmukhi] = ipa
+
+
 
 
 #---------------Create Window---------------#
@@ -428,27 +452,29 @@ def display_next_word():
 
 
     else:                        #Ending screen that only occurs once all words in the list have been said
-      timer.stop()
-      clock.hide()
-      next_button.hide()
-      done_button.hide()
-      point_countdown.hide()
+        timer.stop()
+        clock.hide()
+        next_button.hide()
+        done_button.hide()
+        point_countdown.hide()
 
-      current_word.setText("All finished!")
-      current_word.setFont(QFont("Verdana", 60))
-      current_word.adjustSize()
+        current_word.setText("All finished!")
+        current_word.setFont(QFont("Verdana", 60))
+        current_word.adjustSize()
 
-      total_points.setFont(QFont("Verdana", 24))
-      total_points.setStyleSheet("background-color: lightgreen; border: 2 px; padding: 10px; border-radius: 5px")
-      total_points.adjustSize()
-      layout.addWidget(total_points, alignment=Qt.AlignCenter)  
-      layout.addSpacerItem(QSpacerItem(0, 540, QSizePolicy.Minimum, QSizePolicy.Preferred)) 
+        total_points.setFont(QFont("Verdana", 24))
+        total_points.setStyleSheet("background-color: lightgreen; border: 2 px; padding: 10px; border-radius: 5px")
+        total_points.adjustSize()
+        layout.addWidget(total_points, alignment=Qt.AlignCenter)  
+        layout.addSpacerItem(QSpacerItem(0, 540, QSizePolicy.Minimum, QSizePolicy.Preferred)) 
 
-      filename = f"{user_id}_phase4_reproductions_word_order.csv"   #Download the .csv of all of the words once you have reached the end of the list
-      with open(filename, 'w', newline='', encoding='utf-8-sig') as file:
+        filename = f"{user_id}_phase4_word_order.csv"
+        with open(filename, 'w', newline='', encoding='utf-8-sig') as file:
             writer = csv.writer(file)
+            writer.writerow(["Shahmukhi", "IPA"])  
             for word in phase4_word_order_list:
-                writer.writerow([word])
+                ipa = shahmukhi_to_ipa.get(word, "N/A") 
+                writer.writerow([word, ipa])
 
 
 
