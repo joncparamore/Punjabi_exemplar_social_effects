@@ -695,9 +695,10 @@ def next_word():
         filename = f"{user_id}_phase3_shadow_word_order.csv"   #Download the .csv of all of the words once you have reached the end of the list
         with open(filename, 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
-            writer.writerow(["Shahmukhi Word", "Audio File Path", "Speaker Source"])
-            for word in phase3_word_order_list:
-               writer.writerow(word)
+            writer.writerow(["Shahmukhi Word", "IPA", "Audio File Path", "Speaker Source"])
+            for shahmukhi, path, source in phase3_word_order_list:
+                ipa = next((ipa for ipa, sh in ipa_to_shahmukhi.items() if sh == shahmukhi), "")
+                writer.writerow([shahmukhi, ipa, path, source])
 
         return
 

@@ -135,6 +135,8 @@ class TileGame(QWidget):
         if len(speaker_a_words) < 25 or len(speaker_b_words) < 25:
             raise ValueError(f"Not enough words: {len(speaker_a_words)} for AK1, {len(speaker_b_words)} for ATO.")
 
+        self.change_sh_to_ipa = change_sh_to_ipa
+
         return speaker_a_words, speaker_b_words, map_sh_to_audio
 
 
@@ -437,10 +439,32 @@ class TileGame(QWidget):
                 label.show()
                 y_base += 60
             return
+        
+        #Insert break at halfway point
+        if self.trial_counter == self.total_trials // 2:
+            self.clear_existing_tiles()
+            self.timer.stop()
+            self.points_label.clear()
+            self.target_word_label.hide()
+            self.play_word_button.hide()
+
+            self.instructions.setText(
+                "Great job! You've reached the halfway point.\n\nTake a short break. "
+                "Click 'Continue' when you're ready to proceed."
+                )
+            self.instructions.adjustSize()
+            self.instructions.move(
+                (self.screen_width - self.instructions.width()) // 2,
+                self.scale_h(0.6)
+                )
+            self.instructions.show()
+
+            self.next_button.setText("Continue")
+            self.next_button.show()
+            return
 
         self.current_speaker, self.target_word = self.trials[self.trial_counter]
         self.correct_answer_order.append(self.target_word)
-        scenario = self.scenarios[self.current_speaker]
 
         # Resize character image to small version 
         if self.current_speaker == "B":
@@ -478,9 +502,10 @@ class TileGame(QWidget):
         filename = f"{self.user_id}_phase2_correct_order.csv"
         with open(filename, "w", newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
-            writer.writerow(["Word", "Result"])
+            writer.writerow(["Word", "IPA", "Result"])
             for word, result in self.trial_results:
-                writer.writerow([word, result])
+                ipa = self.change_sh_to_ipa.get(word, "")
+                writer.writerow([word, ipa, result])
                 
             # Calculate summary
             total = len(self.trial_results)
