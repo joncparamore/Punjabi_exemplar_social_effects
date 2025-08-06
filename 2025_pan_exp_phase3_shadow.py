@@ -36,10 +36,8 @@ import random
 
 
 
-
-
-ato_audio_directory = "2025_pan_AT0"
-ak_audio_directory= "2025_pan_AK1"
+at0_audio_directory = "2025_pan_AT0"
+ak1_audio_directory= "2025_pan_AK1"
 
 
 CSV_FILE = "tokens_shahmukhi_ipa.csv"
@@ -75,7 +73,7 @@ with open(dictionary_csv_file, encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for row in reader:
         ipa = row["IPA"].strip()    #Get the IPA column, use .strip to remove extra characters/spaces
-        shahmukhi = row[list(reader.fieldnames)[0]].strip()     #Get the corresponding Shahnukhi
+        shahmukhi = row[list(reader.fieldnames)[0]].strip()     #Get the corresponding Shahmukhi
         ipa_to_shahmukhi[ipa] = shahmukhi
 
 # Get audio files from both directories and map them back to Shahmukhi
@@ -93,40 +91,42 @@ def load_audio_files(directory, source_label):
     return audio_entries
 
 # Load audio from each directory
-ak1_words = load_audio_files(ak_audio_directory, "AK1")
-ato_words = load_audio_files(ato_audio_directory, "ATO")
+ak1_words = load_audio_files(ak1_audio_directory, "AK1")
+at0_words = load_audio_files(at0_audio_directory, "AT0")
 
 
-random.shuffle(ato_words)
+random.shuffle(at0_words)
 random.shuffle(ak1_words)
 
-block1 = ato_words[:12]
+#Divide the word lists into blocks of 12 and 13 words for each
+
+block1 = at0_words[:12]
 block2 = ak1_words[:12]
-block3 = ato_words[12:]  # Remaining 13 words in second block
+block3 = at0_words[12:]  # Remaining 13 words in second block
 block4 = ak1_words[12:]  # Remaining 13
 
-#Build Audio Word List with the section headers
+#Build the audio word list, which the program will utilize throughout to display each word. The audio word list will randomly start with either the AT0 or the AK1 block and will rotate between the blocks. In between each block is a section header screen
 audio_word_list = []
 
-start_with_random = random.choice(["ATO", "AK1"])
+start_with_random = random.choice(["AT0", "AK1"])
 
 
-if start_with_random == "ATO":
-    audio_word_list += [("Section 1", "ATO")] + block1
+if start_with_random == "AT0":
+    audio_word_list += [("Section 1", "AT0")] + block1
     audio_word_list += [("Section 2", "AK1")] + block2
-    audio_word_list += [("Section 3", "ATO")] + block3
+    audio_word_list += [("Section 3", "AT0")] + block3
     audio_word_list += [("Section 4", "AK1")] + block4
     
     
-    audio_word_list += [("Section 5", "ATO")] + block1
+    audio_word_list += [("Section 5", "AT0")] + block1
     audio_word_list += [("Section 6", "AK1")] + block2
-    audio_word_list += [("Section 7", "ATO")] + block3
+    audio_word_list += [("Section 7", "AT0")] + block3
     audio_word_list += [("Section 8", "AK1")] + block4
     
     
-    audio_word_list += [("Section 9", "ATO")] + block1
+    audio_word_list += [("Section 9", "AT0")] + block1
     audio_word_list += [("Section 10", "AK1")] + block2
-    audio_word_list += [("Section 11", "ATO")] + block3
+    audio_word_list += [("Section 11", "AT0")] + block3
     audio_word_list += [("Section 12", "AK1")] + block4
     
     audio_word_list += [("Section 13: Missed Words", "Missed Words")]
@@ -134,19 +134,19 @@ if start_with_random == "ATO":
 
 else:
     audio_word_list += [("Section 1", "AK1")] + block2
-    audio_word_list += [("Section 2", "ATO")] + block1
+    audio_word_list += [("Section 2", "AT0")] + block1
     audio_word_list += [("Section 3", "AK1")] + block4
-    audio_word_list += [("Section 4", "ATO")] + block3
+    audio_word_list += [("Section 4", "AT0")] + block3
     
     audio_word_list += [("Section 5", "AK1")] + block2
-    audio_word_list += [("Section 6", "ATO")] + block1
+    audio_word_list += [("Section 6", "AT0")] + block1
     audio_word_list += [("Section 7", "AK1")] + block4
-    audio_word_list += [("Section 8", "ATO")] + block3
+    audio_word_list += [("Section 8", "AT0")] + block3
     
     audio_word_list += [("Section 9", "AK1")] + block2
-    audio_word_list += [("Section 10", "ATO")] + block1
+    audio_word_list += [("Section 10", "AT0")] + block1
     audio_word_list += [("Section 11", "AK1")] + block4
-    audio_word_list += [("Section 12", "ATO")] + block3
+    audio_word_list += [("Section 12", "AT0")] + block3
     
     
     audio_word_list += [("Section 13: Missed Words", "Missed Words")]
@@ -721,7 +721,7 @@ def next_word():
            image_label.show()
            current_word.setText(audio_word_list[word_num][0] + " of helping Rafiq is about to begin. Remember, after Rafiq speaks each word, acknowledge the word by clearly saying it back.")
            current_word.show()
-        elif "ATO" in audio_word_list[word_num][1]:
+        elif "AT0" in audio_word_list[word_num][1]:
            pixmap = QPixmap("scholar.jpg").scaled(250, 250, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
            image_label.show()
@@ -760,7 +760,7 @@ def next_word():
            pixmap = QPixmap("laborer.jpg").scaled(300, 300, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
            image_label.show()
-       elif source == "ATO":
+       elif source == "AT0":
            pixmap = QPixmap("scholar.jpg").scaled(250, 250, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
            image_label.setPixmap(pixmap)
            image_label.show()
