@@ -8,6 +8,9 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 library(ggplot2)
+library(lme4)
+library(lmerTest)
+library(emmeans)
 
 ####-----------LOAD DATAFRAMES---------------####
 
@@ -140,6 +143,59 @@ df7_exemplar_measures <- df7_exemplar_measures %>%
 
 df3_combined_long$Phase <- as.factor(df3_combined_long$Phase)
 df3_combined_long <- bind_rows(df3_combined_long, df7_exemplar_measures)
+
+####------------Stats Data Frame------------####
+
+df3_combined_long$step[df3_combined_long$step==1] <- "beg"
+df3_combined_long$step[df3_combined_long$step==2] <- "beg"
+df3_combined_long$step[df3_combined_long$step==3] <- "beg"
+
+df3_combined_long$step[df3_combined_long$step==4] <- "mid"
+df3_combined_long$step[df3_combined_long$step==5] <- "mid"
+df3_combined_long$step[df3_combined_long$step==6] <- "mid"
+df3_combined_long$step[df3_combined_long$step==7] <- "mid"
+
+df3_combined_long$step[df3_combined_long$step==8] <- "end"
+df3_combined_long$step[df3_combined_long$step==9] <- "end"
+df3_combined_long$step[df3_combined_long$step==10] <- "end"
+
+df3_combined_long$step <- as.character(df3_combined_long$step)
+df3_combined_long$step <- as.factor(df3_combined_long$step)
+unique(df3_combined_long$step)
+
+####-------SETUP EFFECT CODING----------####
+
+contrasts(df3_combined_long$step)
+df3_combined_long$step <- relevel(df3_combined_long$step, ref = 1)
+
+contrasts(df3_combined_long$step) <- contr.sum(3)
+contrasts(df3_combined_long$step)
+
+
+#Phase
+
+df3_combined_long$Phase <- as.character(df3_combined_long$Phase)
+df3_combined_long$Phase <- as.factor(df3_combined_long$Phase)
+
+
+df3_combined_long <- df3_combined_long %>% filter(Phase == "baseline" | Phase == "postproductions")
+
+contrasts(df3_combined_long$Phase)
+df3_combined_long$Phase <- relevel(df3_combined_long$Phase, ref = 1)
+
+contrasts(df3_combined_long$Phase) <- contr.sum(2)
+contrasts(df3_combined_long$Phase)
+
+
+lmer_exposure <- lmer(F0~step*Phase + segment + (1|word), data=df3_combined_long, REML = T)
+summary(lmer_exposure)
+
+
+emm <- emmeans(lmer_exposure, ~Phase)
+pairwise_contrasts <- pairs(emm)
+summary(pairwise_contrasts)
+
+
 
 
 
